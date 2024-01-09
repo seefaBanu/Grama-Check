@@ -1,0 +1,10 @@
+services:
+  mysql-dev:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: haritha
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data:/var/lib/mysql
