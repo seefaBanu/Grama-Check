@@ -7,19 +7,33 @@ const Stack = createNativeStackNavigator();
 
 export default function App(props) {
   return (
-      <NavigationContainer>
-        <StatusBar barStyle='dark-content' />
-        <Stack.Navigator
-          screenOptions={{ headerShown: false, animation: 'none' }}
-        >
-          <Stack.Screen
-            name='Start screen'
-            component={Screens.StartScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+    <NavigationContainer>
+      <StatusBar barStyle='dark-content' />
+      <Stack.Navigator
+        screenOptions={{ headerShown: false, animation: 'none' }}
+      >
+        <Stack.Screen
+          name='StartScreen'
+          component={Screens.StartScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='NewRequestScreen'
+          component={Screens.NewRequestScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='ChooseOptionScreen'
+          component={Screens.ChooseOptionScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
