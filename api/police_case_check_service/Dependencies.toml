@@ -103,6 +103,9 @@ dependencies = [
 org = "ballerina"
 name = "jballerina.java"
 version = "0.0.0"
+modules = [
+	{org = "ballerina", packageName = "jballerina.java", moduleName = "jballerina.java"}
+]
 
 [[package]]
 org = "ballerina"
@@ -245,6 +248,17 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "persist"
+version = "1.2.0"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"}
+]
+modules = [
+	{org = "ballerina", packageName = "persist", moduleName = "persist"}
+]
+
+[[package]]
+org = "ballerina"
 name = "sql"
 version = "1.11.1"
 dependencies = [
@@ -321,18 +335,37 @@ modules = [
 ]
 
 [[package]]
+org = "ballerinax"
+name = "persist.sql"
+version = "1.2.1"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerina", name = "persist"},
+	{org = "ballerina", name = "sql"},
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerinax", packageName = "persist.sql", moduleName = "persist.sql"}
+]
+
+[[package]]
 org = "shamlyshanawaz"
 name = "police_case_check_service"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "persist"},
 	{org = "ballerina", name = "sql"},
 	{org = "ballerina", name = "time"},
 	{org = "ballerinai", name = "observe"},
 	{org = "ballerinax", name = "mysql"},
-	{org = "ballerinax", name = "mysql.driver"}
+	{org = "ballerinax", name = "mysql.driver"},
+	{org = "ballerinax", name = "persist.sql"}
 ]
 modules = [
-	{org = "shamlyshanawaz", packageName = "police_case_check_service", moduleName = "police_case_check_service"}
+	{org = "shamlyshanawaz", packageName = "police_case_check_service", moduleName = "police_case_check_service"},
+	{org = "shamlyshanawaz", packageName = "police_case_check_service", moduleName = "police_case_check_service.db"}
 ]
 
