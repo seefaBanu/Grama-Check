@@ -9,18 +9,13 @@ import Header from '../components/Header';
 import LoadingModal from '../components/LoadingModal';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import gramaDivisions from '../assets/grama.json';
+import districtData from '../assets/districts.json';
 
 export default function ({ navigation, route }) {
   const [saving, setSaving] = React.useState(false);
-  const [divisions, setDivisions] = React.useState([
-    { value: 'Colombo', key: 'colombo' },
-    { value: 'Siddamulla', key: 'siddamulla' },
-    { value: 'Piliyandala', key: 'piliyandala' },
-    { value: 'Katubedda', key: 'katubedda' },
-  ]);
   const [userData, setUserData] = React.useState({});
   const [division, setDivision] = React.useState('');
-
   const PersonSchema = Yup.object().shape({
     nic: Yup.string()
       .matches(/^([0-9]{9}[x|X|v|V]|[0-9]{12})$/, 'Invalid NIC format')
@@ -81,27 +76,6 @@ export default function ({ navigation, route }) {
               style={styles.vectorimage}
             />
             <View style={styles.inputcont}>
-              <View style={{ width: '100%' }}>
-                <Text
-                  style={{
-                    color: Theme.textColor,
-                    fontFamily: 'Poppins',
-                    fontSize: 16,
-                  }}
-                >
-                  Select Grama Niladari Division
-                </Text>
-                <SelectList
-                  placeholder='-- Select division'
-                  notFoundText='No division found'
-                  searchPlaceholder='Search division...'
-                  data={divisions}
-                  save='key'
-                  value={division}
-                  setSelected={(item) => setDivision(item)}
-                  // setSelected={(item)=>}
-                />
-              </View>
               <TextInputBox
                 inputlabel='National Identity Card Number'
                 placeholder='Enter NIC'
@@ -122,6 +96,27 @@ export default function ({ navigation, route }) {
                 error={formik.errors.address}
                 touched={formik.touched.address}
               />
+              <View style={{ width: '100%' }}>
+                <Text
+                  style={{
+                    color: Theme.textColor,
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                  }}
+                >
+                  District
+                </Text>
+                <SelectList
+                  placeholder='-- Select district'
+                  notFoundText='No district found'
+                  searchPlaceholder='Search district...'
+                  data={districtData.districts}
+                  save='value'
+                  value={division}
+                  setSelected={(item) => setDivision(item)}
+                  // setSelected={(item)=>}
+                />
+              </View>
               <View style={{ height: 20 }} />
               <Button
                 title='Submit Request'
