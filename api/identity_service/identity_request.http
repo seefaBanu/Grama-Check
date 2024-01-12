@@ -3,7 +3,7 @@
 ### Get a specific person details passing nic
 GET http://localhost:9090/identity/check-nic/34e
 
-### defg
+### Post a specific person nic
 POST http://localhost:9090/identity/check-nic
 content-type: application/json
 
