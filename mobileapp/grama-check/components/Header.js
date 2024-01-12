@@ -6,14 +6,8 @@ import Theme from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 
 export default function (props) {
-  function switchFarmer() {
-    nav.navigate('Farmer Dashboard');
-  }
-  function switchCustomer() {
-    nav.navigate('Customer Dashboard');
-  }
   function goHome() {
-    nav.navigate('Customer Dashboard');
+    nav.navigate('ChooseOptionScreen');
   }
   const nav = useNavigation();
   return (
@@ -31,9 +25,7 @@ export default function (props) {
           <Octicons name='home' size={28} color={Theme.textColor} />
         </TouchableOpacity>
       ) : null}
-      {!props.farmer &&
-        !(props.customer && props.hasFarmerAccess) &&
-        !props.home && <View style={{ width: 28 }}></View>}
+      {!props.home && <View style={{ width: 28 }}></View>}
     </View>
   );
 }
