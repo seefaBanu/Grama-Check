@@ -30,7 +30,7 @@ service /general on new http:Listener(9091) {
         self.dbClient = check new ();
     }
 
-    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError & readonly|http:Created & readonly|http:Conflict & readonly {
+    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError|http:Created|http:Conflict {
         //check availability of nic from identity check
         //match the address from address check api
         db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null};
