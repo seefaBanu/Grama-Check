@@ -29,7 +29,7 @@ export default function ({ navigation, route }) {
             <Status
               status={{
                 submitted: true,
-                addressVerified: true,
+                addressVerified: false,
                 approved: true,
                 ready: false,
               }}
