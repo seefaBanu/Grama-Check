@@ -1,0 +1,104 @@
+{
+  "districts": [
+    {
+      "key": "colombo",
+      "value": "Colombo"
+    },
+    {
+      "key": "gampaha",
+      "value": "Gampaha"
+    },
+    {
+      "key": "kalutara",
+      "value": "Kalutara"
+    },
+    {
+      "key": "mahanuwara",
+      "value": "Mahanuwara"
+    },
+    {
+      "key": "matale",
+      "value": "Matale"
+    },
+    {
+      "key": "nuwara-eliya",
+      "value": "Nuwara Eliya"
+    },
+    {
+      "key": "galle",
+      "value": "Galle"
+    },
+    {
+      "key": "matara",
+      "value": "Matara"
+    },
+    {
+      "key": "hambantota",
+      "value": "Hambantota"
+    },
+    {
+      "key": "jaffna",
+      "value": "Jaffna"
+    },
+    {
+      "key": "mannar",
+      "value": "Mannar"
+    },
+    {
+      "key": "vavuniya",
+      "value": "Vavuniya"
+    },
+    {
+      "key": "mullaitivu",
+      "value": "Mullaitivu"
+    },
+    {
+      "key": "kilinochchi",
+      "value": "Kilinochchi"
+    },
+    {
+      "key": "batticaloa",
+      "value": "Batticaloa"
+    },
+    {
+      "key": "kurunegala",
+      "value": "Kurunegala"
+    },
+    {
+      "key": "ampara",
+      "value": "Ampara"
+    },
+    {
+      "key": "trincomalee",
+      "value": "Trincomalee"
+    },
+    {
+      "key": "puttalam",
+      "value": "Puttalam"
+    },
+    {
+      "key": "anuradhapura",
+      "value": "Anuradhapura"
+    },
+    {
+      "key": "polonnaruwa",
+      "value": "Polonnaruwa"
+    },
+    {
+      "key": "badulla",
+      "value": "Badulla"
+    },
+    {
+      "key": "moneragala",
+      "value": "Moneragala"
+    },
+    {
+      "key": "ratnapura",
+      "value": "Ratnapura"
+    },
+    {
+      "key": "kegalle",
+      "value": "Kegalle"
+    }
+  ]
+}

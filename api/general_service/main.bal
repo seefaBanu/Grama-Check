@@ -1,55 +1,59 @@
+import general_service.db;
+
 import ballerina/http;
-import ballerina/sql;
+import ballerina/persist;
 import ballerina/time;
-import ballerinax/mysql;
-import ballerinax/mysql.driver as _;
+import ballerina/uuid;
 
-type NewRequest record {|
+type NewCertificateRequest record {|
     string nic;
     string address;
+    // string grama_area?;
 |};
 
-type CertificateRequest record {|
-    readonly int id;
+type CertificateRequestDTO record {|
+    string id;
     string nic;
     string address;
-    time:Date timeStamp;
+    record {|
+        time:Civil submitted;
+        time:Civil? address_verified;
+        time:Civil? approved;
+    |} status;
+    string userEmail;
+    string assignedGramiEmail;
 |};
 
-type DatabaseConfig record {|
-    string host;
-    string user;
-    string password;
-    string database;
-    int port;
-|};
+service /general on new http:Listener(9091) {
+    private final db:Client dbClient;
+    function init() returns error? {
+        self.dbClient = check new ();
+    }
 
-configurable DatabaseConfig databaseConfig = ?;
-
-// table<CertificateRequest> key(id) certificateRequests = table [];
-
-mysql:Client gramaCheckDb = check new (...databaseConfig);
-
-service /general
-on new http:Listener(9091) {
-    resource function post user/certificate(NewRequest request) returns http:Created|error {
+    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError & readonly|http:Created & readonly|http:Conflict & readonly {
         //check availability of nic from identity check
         //match the address from address check api
-        _ = check gramaCheckDb->execute(`
-        insert into certificateRequests (nic, address, timeStamp) 
-        values (${request.nic},${request.address}, CURRENT_TIMESTAMP);`);
+        db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null};
+        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com"};
+        string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
+        if statusResult is persist:Error {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        string[]|persist:Error result = self.dbClient->/certificaterequests.post([newCertificateRequest]);
+        if result is persist:Error {
+            return http:INTERNAL_SERVER_ERROR;
+        }
         return http:CREATED;
     }
-
-    resource function get grama/certificate() returns CertificateRequest[]|error {
-        stream<CertificateRequest, sql:Error?> certificateRequestStream = gramaCheckDb->query(`select * from certificateRequests;`);
-        return from var certificateRequest in certificateRequestStream
+    resource function get grama/certificate() returns CertificateRequestDTO[]|error {
+        stream<CertificateRequestDTO, persist:Error?> certificateRequests = self.dbClient->/certificaterequests;
+        return from CertificateRequestDTO certificateRequest in certificateRequests
             select certificateRequest;
-
     }
-    resource function get grama/certificate/[int id]() returns CertificateRequest|http:NotFound|error {
-        CertificateRequest|sql:Error certificateRequest = gramaCheckDb->queryRow(`select * from certificateRequests where id = ${id};`);
-        if certificateRequest is sql:NoRowsError {
+
+    resource function get grama/certificate/[string id]() returns CertificateRequestDTO|http:NotFound|error {
+        CertificateRequestDTO|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+        if certificateRequest is persist:NotFoundError {
             return http:NOT_FOUND;
         }
         return certificateRequest;
