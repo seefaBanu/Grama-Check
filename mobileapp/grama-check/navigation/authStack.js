@@ -33,6 +33,13 @@ export default function App(props) {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name='SignInScreen'
+          component={Screens.SignInScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
