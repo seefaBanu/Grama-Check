@@ -8,7 +8,7 @@ function RequestList() {
   const naivgate = useNavigate();
 
   const data = [
-    { id: 9001, name: 'jhon', email: 'jhon@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Pending' ,isReady:true},
+    { id: 9001, name: 'jhon', email: 'jhon@gmail.com', nic: '190006667V', date: "10-01-2023", status: 'Pending' ,isReady:true},
     { id: 9872, name: 'mary', email: 'mary@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Rejected' },
     { id: 10893, name: 'malliban', email: 'malliban@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Approved' },
     // Add more data as needed
@@ -53,16 +53,15 @@ function RequestList() {
     item.nic.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
-  const handleRowClick = (request) => {
-    setSelectedRequest(request);
-  };
 
   return (
     <div className='font-heading '>
       <div className='flex mb-10'>
         <h1 className='font-medium text-2xl p-2 w-full radius text-slate-600'>Requests</h1>
-        <div className='mt-3'> <SearchBar onSearch={handleSearch} /></div>
+        <div className='mt-3'> <SearchBar onChange={handleSearch} /></div>
       </div>
+
+      {/* Selection Tab */}
       <div className='flex flex-start mb-2 '>
         <h1
           onClick={() => handleTabClick('All Requests')}
@@ -98,6 +97,7 @@ function RequestList() {
         </h1>
         
       </div>
+      
       <table className="table-auto flex-row w-full border shadow-sm rounded-lg">
         <thead className='bg-gray-100 rounded-2xl text-slate-500'>
           <tr className='text-left h-10 '>
@@ -113,7 +113,8 @@ function RequestList() {
             <tr 
             key={item.id} 
             className='border-b-2 round  '
-            onClick={() => naivgate("/test")}
+	    onClick={() => naivgate(`/test/${item.nic}`)}
+
             >
               <td className='text-xs p-2'>{item.id}</td>
               <td className='text-xs p-2'>

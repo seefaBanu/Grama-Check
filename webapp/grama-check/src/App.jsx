@@ -17,7 +17,7 @@ function App() {
          <BrowserRouter>
           <Routes>
             <Route path="/" element={<RequestList />} />
-            <Route path="/test" element={<SingleRequest />} />
+            <Route path="/test/:nic" element={<SingleRequest />} />
             <Route path="/testcon" element={<ContextApiTest />} />
           </Routes>
         </BrowserRouter>  
