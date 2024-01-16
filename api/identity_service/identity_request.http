@@ -1,10 +1,10 @@
 
 
 ### Get a specific person details passing nic
-GET http://localhost:9090/identity/check-nic/34e
+GET http://localhost:9090/identity/verify-nic/34e
 
 ### Post a specific person nic
-POST http://localhost:9090/identity/check-nic
+POST http://localhost:9090/identity/verify-nic
 content-type: application/json
 
 {
