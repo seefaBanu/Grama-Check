@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import SearchBar from '../components/SearchBar';
+import { useNavigate } from 'react-router-dom';
 
 function RequestList() {
   const [selectedTab, setSelectedTab] = useState('All Requests');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const naivgate = useNavigate();
 
   const data = [
-    { id: 9001, name: 'jhon', email: 'jhon@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Pending' },
+    { id: 9001, name: 'jhon', email: 'jhon@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Pending' ,isReady:true},
     { id: 9872, name: 'mary', email: 'mary@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Rejected' },
     { id: 10893, name: 'malliban', email: 'malliban@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Approved' },
     // Add more data as needed
@@ -50,6 +52,10 @@ function RequestList() {
   const filteredDataWithSearch = filteredData.filter((item) =>
     item.nic.toLowerCase().includes(searchKeyword.toLowerCase())
   );
+
+  const handleRowClick = (request) => {
+    setSelectedRequest(request);
+  };
 
   return (
     <div className='font-heading '>
@@ -104,7 +110,11 @@ function RequestList() {
         </thead>
         <tbody className=' '>
           {filteredDataWithSearch.map((item) => (
-            <tr key={item.id} className='border-b-2 round '>
+            <tr 
+            key={item.id} 
+            className='border-b-2 round  '
+            onClick={() => naivgate("/test")}
+            >
               <td className='text-xs p-2'>{item.id}</td>
               <td className='text-xs p-2'>
                 <h1 className='text-xs'>{item.name}</h1>
@@ -126,6 +136,7 @@ function RequestList() {
           ))}
         </tbody>
       </table>
+      
     </div>
   );
 }
