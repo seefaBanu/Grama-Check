@@ -29,7 +29,7 @@ export default function ({ navigation, route }) {
             size='big'
             color='filledPrimary'
             title='Get Started'
-            onPress={() => navigation.navigate('SignInScreen')}
+            onPress={() => navigation.navigate('ChooseOptionScreen')}
           />
         </View>
       </View>

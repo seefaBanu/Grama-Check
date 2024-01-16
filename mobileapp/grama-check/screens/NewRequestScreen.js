@@ -11,6 +11,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import gramaDivisions from '../assets/grama.json';
 import districtData from '../assets/districts.json';
+import env from '../constants/env';
 
 export default function ({ navigation, route }) {
   const [saving, setSaving] = React.useState(false);
@@ -39,27 +40,68 @@ export default function ({ navigation, route }) {
     const data = formik.values;
     setUserData(data);
     setSaving(true);
-    setSaving(false);
-    if (error) {
-      navigation.navigate('Message', {
+    let response;
+    try {
+      const res = await fetch(env.backend + '/user/certificate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nic: data.nic,
+          address: data.address,
+          // division: division,
+        }),
+      });
+      response = await res.json();
+      setSaving(false);
+
+      formik.resetForm();
+      if (res.status == 404) {
+        if (response.message == 'Identity Check Failed.') {
+          navigation.navigate('MessageScreen', {
+            type: 'fail',
+            messageTitle: 'NIC not found!',
+            messageText:
+              'The NIC you entered is not registered in our system. Please try again.',
+            goto: 'NewRequestScreen',
+            goButtonText: 'Try Again',
+          });
+          return;
+        }
+      }
+      console.log(res.status);
+      console.log(response);
+      if (res.status == 201) {
+        navigation.navigate('MessageScreen', {
+          type: 'Success',
+          messageTitle: 'Request Sent!',
+          messageText:
+            'We have received your request and your Grama Niladari will get back to you.',
+          goto: 'RequestStatusScreen',
+          goButtonText: 'Check Status',
+        });
+        return;
+      }
+      navigation.navigate('MessageScreen', {
         type: 'fail',
         messageTitle: 'Something went wrong :(',
         messageText:
           "Not everything goes the way we like. Let's try again later :)",
-        goto: 'Card Management',
+        goto: 'NewRequestScreen',
         goButtonText: 'Try Again',
       });
-      return;
-    } else if (setupIntent) {
-      navigation.navigate('Message', {
-        type: 'Success',
-        messageTitle: 'Request Submitted!',
+    } catch (e) {
+      setSaving(false);
+      console.log(e);
+      navigation.navigate('MessageScreen', {
+        type: 'fail',
+        messageTitle: 'Something went wrong :(',
         messageText:
-          'We have received your request and your Grama Niladari will get back to you.',
-        goto: 'Card Management',
-        goButtonText: 'Track Request',
+          "Not everything goes the way we like. Let's try again later :)",
+        goto: 'NewRequestScreen',
+        goButtonText: 'Try Again',
       });
-      return;
     }
   }
 

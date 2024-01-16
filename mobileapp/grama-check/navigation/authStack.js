@@ -14,7 +14,7 @@ export default function App(props) {
       >
         <Stack.Screen
           name='StartScreen'
-          component={Screens.RequestStatusScreen}
+          component={Screens.StartScreen}
           options={{
             headerShown: false,
           }}
@@ -36,6 +36,20 @@ export default function App(props) {
         <Stack.Screen
           name='SignInScreen'
           component={Screens.SignInScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='RequestStatusScreen'
+          component={Screens.RequestStatusScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='MessageScreen'
+          component={Screens.MessageScreen}
           options={{
             headerShown: false,
           }}
