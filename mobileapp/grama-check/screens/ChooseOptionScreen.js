@@ -34,7 +34,7 @@ export default function ({ navigation, route }) {
             size='big'
             color='shadedWarning'
             title='My Account'
-            onPress={() => {}}
+            onPress={() => navigation.navigate('SignInScreen')}
           />
         </View>
       </View>

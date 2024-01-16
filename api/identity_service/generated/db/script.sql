@@ -6,7 +6,6 @@
 DROP TABLE IF EXISTS `Person`;
 
 CREATE TABLE `Person` (
-	`id` INT NOT NULL,
 	`name` VARCHAR(191) NOT NULL,
 	`nic` VARCHAR(191) NOT NULL,
 	`birthDate` DATE NOT NULL,
