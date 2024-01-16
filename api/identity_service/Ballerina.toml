@@ -7,12 +7,6 @@ distribution = "2201.8.4"
 [build-options]
 observabilityIncluded = true
 
-[[platform.java11.dependency]]
-groupId = "mysql"
-artifactId = "mysql-connector-java"
-version = "8.0.26"
-path = "C:/Users/githmi/Downloads/mysql-connector-j-8.1.0/mysql-connector-j-8.1.0/mysql-connector-j-8.1.0.jar"
-
 [persist]
 datastore = "mysql"
 module = "identity_service.db"
