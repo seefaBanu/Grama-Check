@@ -49,6 +49,14 @@ type InternalServerErrorMessage record {|
     *http:InternalServerError;
 |};
 
+type CreatedMessage record {|
+    *http:Created;
+|};
+
+InternalServerErrorMessage failed = {
+    body: {message: string `Error connecting to Identity Service.`}
+};
+
 service /general on new http:Listener(9091) {
     private final db:Client dbClient;
     function init() returns error? {
@@ -90,13 +98,18 @@ service /general on new http:Listener(9091) {
         db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com"};
         string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
         if statusResult is persist:Error {
-            return http:INTERNAL_SERVER_ERROR;
+
+            return failed;
         }
         string[]|persist:Error result = self.dbClient->/certificaterequests.post([newCertificateRequest]);
         if result is persist:Error {
-            return http:INTERNAL_SERVER_ERROR;
+
+            return failed;
         }
-        return http:CREATED;
+        CreatedMessage success = {
+            body: {message: string `Success`}
+        };
+        return success;
     }
 
     resource function get grama/certificate() returns CertificateRequestDTO[]|error {
