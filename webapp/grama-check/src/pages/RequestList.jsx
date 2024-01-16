@@ -73,28 +73,28 @@ function RequestList() {
           All Requests
         </h1>
         <h1
-          onClick={() => handleTabClick('Pending Requests')}
+          onClick={() => handleTabClick('Pending')}
           className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'Pending Requests' ? 'bg-slate-200' : ''
+            selectedTab === 'Pending' ? 'bg-slate-200' : ''
           }`}
         >
-          Pending Requests
+          Pending 
         </h1>
         <h1
-          onClick={() => handleTabClick('Approved Requests')}
+          onClick={() => handleTabClick('Approved')}
           className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'Approved Requests' ? 'bg-slate-200' : ''
+            selectedTab === 'Approved' ? 'bg-slate-200' : ''
           }`}
         >
-          Approved Requests
+          Approved 
         </h1>
         <h1
-          onClick={() => handleTabClick('Rejected Requests')}
+          onClick={() => handleTabClick('Rejected')}
           className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'Rejected Requests' ? 'bg-slate-200' : ''
+            selectedTab === 'Rejected' ? 'bg-slate-200' : ''
           }`}
         >
-          Rejected Requests
+          Rejected 
         </h1>
         
       </div>
