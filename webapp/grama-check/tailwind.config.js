@@ -5,13 +5,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
-    fontFamily: {
-      'sans': ['ui-sans-serif', 'system-ui'],
-      'serif': ['ui-serif', 'Georgia'],
-      'mono': ['ui-monospace', 'SFMono-Regular'],
-      'display': ['Oswald'],
-      'body': ['"Open Sans"'],
+    extend: {
+      fontFamily: {
+        mont: ['var(--font-mont)'],
+        mono: ['var(--font-roboto-mono)'],
+        general: ['"Poppins"', 'sans-serif'],
+        heading:['"poppins"','sans-serif']
+      },
     },
   },
   plugins: [],
