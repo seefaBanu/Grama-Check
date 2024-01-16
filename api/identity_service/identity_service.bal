@@ -1,5 +1,4 @@
 import ballerina/http;
-import ballerina/sql;
 import identity_service.db;
 import ballerina/persist;
 // import ballerina/io;
@@ -44,12 +43,11 @@ service /identity on new http:Listener(9090) {
     // db:Person Person;
     resource function post check\-nic(NICJSON nicJson) returns db:Person |PersonNotFound|error {
         db:Person|persist:Error person=self.dbClient->/people/[nicJson.nic]();
-        if person is sql:NoRowsError{
+        if person is persist:NotFoundError{
             PersonNotFound personNotFound={
                 body: {message: string `This ${nicJson.nic} is invalid` }
             };
             return  personNotFound;
-           
         }
         return person;
     }

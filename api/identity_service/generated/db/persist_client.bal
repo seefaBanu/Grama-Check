@@ -22,7 +22,6 @@ public isolated client class Client {
             entityName: "Person",
             tableName: "Person",
             fieldMetadata: {
-                id: {columnName: "id"},
                 name: {columnName: "name"},
                 nic: {columnName: "nic"},
                 birthDate: {columnName: "birthDate"},
