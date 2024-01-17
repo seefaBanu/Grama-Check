@@ -25,17 +25,15 @@ service /police\-check on new http:Listener(9090) {
         self.dbClient= check new();
     }
 
-    resource function post .(NICDTO nicDto) returns http:InternalServerError & readonly|PoliceCase[]|http:NotFound & readonly {
-        CitizenDto|persist:Error citizen = self.dbClient->/citizens/[nicDto.nic]();
+    resource function post .(NICDTO nicDto) returns http:InternalServerError |http:NotFound |db:PoliceCaseOptionalized[]? {
+        db:CitizenWithRelations|persist:Error citizen = self.dbClient->/citizens/[nicDto.nic]();
         if(citizen is persist:Error){
             if citizen is persist:NotFoundError{
                 return http:NOT_FOUND;
             }
             return http:INTERNAL_SERVER_ERROR;
         }
-        return citizen.policecases;
+        return citizen.policecase;
     }
     
-    
-
 }
