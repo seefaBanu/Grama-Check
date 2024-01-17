@@ -1,6 +1,23 @@
-import { FaCheck } from 'react-icons/fa';
+import { useState,useEffect } from 'react';
+import { FaCheck,FaTimes } from 'react-icons/fa';
 
-export default function StatusIcon({done,status}) {
+export default function StatusIcon({text,status}) {
+  const [statusColor,setStatusColor]=useState();
+
+  useEffect(() => {
+    if (status?.toLowerCase() === 'done') {
+      setStatusColor('bg-green-400');
+    } else if (status?.toLowerCase() === 'rejected') {
+      setStatusColor('bg-red-400');
+    } 
+    else if(status?.toLowerCase() === 'pending'){
+      setStatusColor('bg-gray-400');
+    }
+    else{
+      setStatusColor('bg-gray-400');
+    }
+  }, [status]);
+
   return (
     <div className="flex items-center">
     <div className="relative 
@@ -11,14 +28,21 @@ export default function StatusIcon({done,status}) {
     flex items-center justify-center ">
       <div
         className={`
+        rounded-3xl 
         sm:w-8 sm:h-8 
         md:w-10 md:h-10 
         xl:w-12 xl:h-12 
         w-14 h-14 
-        rounded-full 
-        ${done ? ' bg-[#5567d5]' : 'bg-[#9E9E9E]'}`}
+        
+         ${statusColor}`}
       >
-        {done && <FaCheck className="text-white my-3 mx-auto 
+        {status?.toLowerCase()==='done' && <FaCheck className="text-white my-3 mx-auto 
+        sm:text-md
+        sm:my-2
+        md:text-xl
+        xl:text-2xl
+        text-3xl"/>}
+        {status?.toLowerCase()==='rejected' && <FaTimes className="text-white my-3 mx-auto 
         sm:text-md
         sm:my-2
         md:text-xl
@@ -30,13 +54,12 @@ export default function StatusIcon({done,status}) {
     <p
       className={`
       sm:text-sm
-      md:text-md
-      xl:text-lg
-      text-xl 
-      font-serif 
+      md:text-sm
+      xl:text-base
+      text-lg
       text-[#555555]`}
     >
-      {status}
+      {text}
     </p>
     </div>
   </div>
