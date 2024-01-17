@@ -20,6 +20,8 @@ type CertificateRequestDTO record {|
         time:Civil submitted;
         time:Civil? address_verified;
         time:Civil? approved;
+        time:Civil? completed;
+        time:Civil? rejected;
     |} status;
     string userEmail;
     string assignedGramiEmail;
@@ -94,8 +96,8 @@ service /general on new http:Listener(9091) {
         io:print("person: ", person);
         //check availability of nic from identity check
         //match the address from address check api
-        db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null};
-        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com"};
+        db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null,rejected: (), completed: ()};
+        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com", userName: person.name};
         string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
         if statusResult is persist:Error {
 
@@ -126,5 +128,25 @@ service /general on new http:Listener(9091) {
         }
         return certificateRequest;
     }
+
+    resource function get user/certificate/[string email]() returns http:InternalServerError |CertificateRequestDTO|http:Forbidden   {
+        
+        // CertificateRequestDTO|persist:Error certificateRequest = self.dbClient->/certificaterequests();
+        // string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
+        // db:StatusOfUser status = {id: uuid:createType4AsString(), completed: null, rejected: null};
+        // stream<Request, persist:Error?> certificateRequest = self.dbClient->/certificaterequests;
+        stream<CertificateRequestDTO, persist:Error?> certificateRequestsStream = self.dbClient->/certificaterequests;
+        CertificateRequestDTO[]|persist:Error certificates =  from CertificateRequestDTO certificate in certificateRequestsStream where certificate.userEmail==email && certificate.status.completed == null select certificate;        
+        if certificates is persist:Error{
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        return certificates[0];
+        // }  else if certificateRequest.status.completed==null && certificateRequest.status.rejected ==null{
+        //     return certificateRequest;
+        // }
+        
+       
+    }
+
 
 }

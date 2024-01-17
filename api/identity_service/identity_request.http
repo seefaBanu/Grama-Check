@@ -8,7 +8,7 @@ POST http://localhost:9090/identity/verify-nic
 content-type: application/json
 
 {
-    "nic":"45v"
+    "nic":"34e"
 }
 
 ###
