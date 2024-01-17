@@ -41,7 +41,7 @@ service /identity on new http:Listener(9090) {
         self.dbClient = check new();
     }
     // db:Person Person;
-    resource function post check\-nic(NICJSON nicJson) returns db:Person |PersonNotFound|error {
+    resource function post verify\-nic(NICJSON nicJson) returns db:Person |PersonNotFound|error {
         db:Person|persist:Error person=self.dbClient->/people/[nicJson.nic]();
         if person is persist:NotFoundError{
             PersonNotFound personNotFound={
