@@ -7,6 +7,7 @@ type CertificateRequest record {|
     string address;
     Status status;
     string userEmail;
+    string userName;
     string assignedGramiEmail;
 |};
 

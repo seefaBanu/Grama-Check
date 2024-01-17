@@ -9,6 +9,7 @@ public type CertificateRequest record {|
     string address;
     string statusId;
     string userEmail;
+    string userName;
     string assignedGramiEmail;
 |};
 
@@ -18,6 +19,7 @@ public type CertificateRequestOptionalized record {|
     string address?;
     string statusId?;
     string userEmail?;
+    string userName?;
     string assignedGramiEmail?;
 |};
 
@@ -35,6 +37,7 @@ public type CertificateRequestUpdate record {|
     string address?;
     string statusId?;
     string userEmail?;
+    string userName?;
     string assignedGramiEmail?;
 |};
 

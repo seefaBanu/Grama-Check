@@ -28,6 +28,7 @@ public isolated client class Client {
                 address: {columnName: "address"},
                 statusId: {columnName: "statusId"},
                 userEmail: {columnName: "userEmail"},
+                userName: {columnName: "userName"},
                 assignedGramiEmail: {columnName: "assignedGramiEmail"},
                 "status.id": {relation: {entityName: "status", refField: "id"}},
                 "status.submitted": {relation: {entityName: "status", refField: "submitted"}},
@@ -54,6 +55,7 @@ public isolated client class Client {
                 "certificaterequest.address": {relation: {entityName: "certificaterequest", refField: "address"}},
                 "certificaterequest.statusId": {relation: {entityName: "certificaterequest", refField: "statusId"}},
                 "certificaterequest.userEmail": {relation: {entityName: "certificaterequest", refField: "userEmail"}},
+                "certificaterequest.userName": {relation: {entityName: "certificaterequest", refField: "userName"}},
                 "certificaterequest.assignedGramiEmail": {relation: {entityName: "certificaterequest", refField: "assignedGramiEmail"}}
             },
             keyFields: ["id"],

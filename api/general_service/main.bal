@@ -97,7 +97,7 @@ service /general on new http:Listener(9091) {
         //check availability of nic from identity check
         //match the address from address check api
         db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null,rejected: (), completed: ()};
-        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com"};
+        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com", userName: person.name};
         string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
         if statusResult is persist:Error {
 
