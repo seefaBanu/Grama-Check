@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
+import SingleRequest from '../components/SingleRequest';
+import NavBar from '../components/NavBar';
+import {Tab, THDetails, Table,THead,TBRow } from '../components/Elements';
 
 function RequestList() {
   const [selectedTab, setSelectedTab] = useState('All Requests');
@@ -55,7 +58,9 @@ function RequestList() {
 
 
   return (
-    <div className='font-heading '>
+    <>
+    <NavBar/>
+    <div className='font-heading m-4 '>
       <div className='flex mb-10'>
         <h1 className='font-medium text-2xl p-2 w-full radius text-slate-600'>Requests</h1>
         <div className='mt-3'> <SearchBar onChange={handleSearch} /></div>
@@ -63,58 +68,29 @@ function RequestList() {
 
       {/* Selection Tab */}
       <div className='flex flex-start mb-2 '>
-        <h1
-          onClick={() => handleTabClick('All Requests')}
-          className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'All Requests' ? 'bg-slate-200' : ''
-          }`}
-        >
-          All Requests
-        </h1>
-        <h1
-          onClick={() => handleTabClick('Pending')}
-          className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'Pending' ? 'bg-slate-200' : ''
-          }`}
-        >
-          Pending 
-        </h1>
-        <h1
-          onClick={() => handleTabClick('Approved')}
-          className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'Approved' ? 'bg-slate-200' : ''
-          }`}
-        >
-          Approved 
-        </h1>
-        <h1
-          onClick={() => handleTabClick('Rejected')}
-          className={`font-medium text-xs radius px-4 py-2 mr-2 hover:bg-slate-200 hover:cursor-pointer text-slate-600 rounded-xl ${
-            selectedTab === 'Rejected' ? 'bg-slate-200' : ''
-          }`}
-        >
-          Rejected 
-        </h1>
-        
+      ` <Tab tabName="All Requests" selectedTab={selectedTab} handleTabClick={handleTabClick} />
+        <Tab tabName="Pending" selectedTab={selectedTab} handleTabClick={handleTabClick} />
+        <Tab tabName="Approved" selectedTab={selectedTab} handleTabClick={handleTabClick} />
+        <Tab tabName="Rejected" selectedTab={selectedTab} handleTabClick={handleTabClick} />
       </div>
       
-      <table className="table-auto flex-row w-full border shadow-sm rounded-lg">
-        <thead className='bg-gray-100 rounded-2xl text-slate-500'>
+      <table   className="table-auto flex-row w-full border shadow-sm rounded-lg">
+        <THead >
           <tr className='text-left h-10 '>
-            <th className='font-medium p-2'>Request ID</th>
-            <th className='font-medium p-2'>Basic Info</th>
-            <th className='font-medium p-2'>Nic</th>
-            <th className='font-medium p-2'>Requested Date</th>
-            <th className='font-medium w-1/6 p-2 '>Status</th>
+            <THDetails tableHeading='Request ID'/>
+            <THDetails tableHeading='Basic Info'/>
+            <THDetails tableHeading='Nic'/>
+            <THDetails tableHeading='Requested Date'/>
+            <THDetails tableHeading='Status' />
           </tr>
-        </thead>
-        <tbody className=' '>
+        </THead>
+
+        <tbody>
           {filteredDataWithSearch.map((item) => (
             <tr 
             key={item.id} 
-            className='border-b-2 round  '
-	    onClick={() => naivgate(`/test/${item.nic}`)}
-
+            className='border-b-2 round'
+	          onClick={() => naivgate(`/test/${item.nic}`)}
             >
               <td className='text-xs p-2'>{item.id}</td>
               <td className='text-xs p-2'>
@@ -137,8 +113,9 @@ function RequestList() {
           ))}
         </tbody>
       </table>
-      
     </div>
+    </>
+
   );
 }
 
