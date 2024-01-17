@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, ImageBackground, Image } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Image, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Theme from '../constants/theme';
 
 export default function ({ navigation, route }) {

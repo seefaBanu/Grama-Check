@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Theme from '../constants/theme';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
@@ -69,35 +68,35 @@ export default function ({ navigation, route }) {
     })();
   }, [result]);
   return (
-    <SafeAreaView>
-      <View style={styles.screen}>
-        <View style={styles.content}>
-          <View style={styles.descContainer}>
-            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
-            <H4 style={{ ...styles.text, ...styles.description }}>
-              Please sign in first.
-            </H4>
-            <Button
-              size='big'
-              color='shadedPrimary'
-              title='Sign In'
-              onPress={() => promptAsync()}
-            />
+    // <SafeAreaView>
+    <View style={styles.screen}>
+      <View style={styles.content}>
+        <View style={styles.descContainer}>
+          <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+          <H4 style={{ ...styles.text, ...styles.description }}>
+            Please sign in first.
+          </H4>
+          <Button
+            size='big'
+            color='shadedPrimary'
+            title='Sign In'
+            onPress={() => promptAsync()}
+          />
+          {decodedIdToken && (
+            <Text>Welcome {decodedIdToken.given_name || ''}!</Text>
+          )}
+          {decodedIdToken && <Text>{decodedIdToken.email}</Text>}
+          <View style={styles.accessTokenBlock}>
             {decodedIdToken && (
-              <Text>Welcome {decodedIdToken.given_name || ''}!</Text>
+              <Text>Access Token: {tokenResponse.access_token}</Text>
             )}
-            {decodedIdToken && <Text>{decodedIdToken.email}</Text>}
-            <View style={styles.accessTokenBlock}>
-              {decodedIdToken && (
-                <Text>Access Token: {tokenResponse.access_token}</Text>
-              )}
-            </View>
           </View>
         </View>
-
-        {/* </ImageBackground> */}
       </View>
-    </SafeAreaView>
+
+      {/* </ImageBackground> */}
+    </View>
+    // </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({

@@ -14,7 +14,7 @@ export default function App(props) {
       >
         <Stack.Screen
           name='StartScreen'
-          component={Screens.SignInScreen}
+          component={Screens.StartScreen}
           options={{
             headerShown: false,
           }}
@@ -33,13 +33,13 @@ export default function App(props) {
             headerShown: false,
           }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name='SignInScreen'
           component={Screens.SignInScreen}
           options={{
             headerShown: false,
           }}
-        />
+        /> */}
         <Stack.Screen
           name='RequestStatusScreen'
           component={Screens.RequestStatusScreen}

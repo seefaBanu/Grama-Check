@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Image, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, Image, ScrollView, Text,SafeAreaView } from 'react-native';
 import Theme from '../constants/theme';
 import { Button } from '../components/Buttons';
 import { TextInputBox, SelectList } from '../components/Inputs';
 import { H3, P } from '../components/Texts';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../components/Header';
 import LoadingModal from '../components/LoadingModal';
 import { useFormik } from 'formik';

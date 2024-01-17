@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  SafeAreaView,
-} from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Image } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Theme from '../constants/theme';
 
 export default function ({ navigation, route }) {
@@ -21,31 +16,36 @@ export default function ({ navigation, route }) {
       > */}
         <View style={styles.content}>
           <View style={styles.descContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={require('../assets/homescreen.png')}
+                style={styles.mainImage}
+              />
+            </View>
             <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
             <H4 style={{ ...styles.text, ...styles.description }}>
               Request your Grama Niladari Certificates.
             </H4>
             <Button
               size='big'
-              color='shadedPrimary'
-              title='Submit New Request'
-              onPress={() => navigation.navigate('NewRequestScreen')}
-            />
-            {/* <Button
-            size='big'
-            color='shadedPrimary'
-            title='Track Your Request'
-            onPress={() => navigation.navigate('GetStartedScreen')}
-          /> */}
-            <Button
-              size='big'
-              color='shadedWarning'
-              title='My Account'
-              onPress={() => navigation.navigate('SignInScreen')}
+              color='filledPrimary'
+              title='Get Started'
+              onPress={() => navigation.navigate('ChooseOptionScreen')}
             />
           </View>
         </View>
-
+        <View style={styles.logoFooter}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../assets/SLEmblem.png')}
+              style={styles.logo}
+            />
+            <Image
+              source={require('../assets/choreo.png')}
+              style={styles.logo}
+            />
+          </View>
+        </View>
         {/* </ImageBackground> */}
       </View>
     </SafeAreaView>
@@ -66,8 +66,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   descContainer: {
-    width: '90%',
-    // alignItems: 'center',
+    alignItems: 'center',
+  },
+  logoFooter: {
+    height: 100,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 20,
+  },
+  imageContainer: {
+    // width: '80%',
+    // height: 70,
+    height: '50%',
+    width: '100%',
+    justifyContent: 'center',
   },
   logoContainer: {
     width: '80%',
