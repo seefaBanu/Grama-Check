@@ -8,8 +8,6 @@ import { BrowserRouter, Router, Link, Route, Routes } from "react-router-dom";
 
 function App() {
 
-  var nic=7;
-
   return (
     <div className="m-4 ">
          <BrowserRouter>
