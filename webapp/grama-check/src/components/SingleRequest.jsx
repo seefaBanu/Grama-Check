@@ -32,9 +32,7 @@ export default function SingleRequest({citizen,status,isReady}) {
               </div>
             <div className="actions flex justify-center">
               <Button title='Approve'/>
-              <Button title='Reject' color='danger' onClick={() => {
-                  close();
-                }}/>
+              <Button title='Reject' color='danger'/>
             </div>
             </div>
            

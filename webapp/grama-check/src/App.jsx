@@ -1,9 +1,7 @@
 import React from 'react'
 import RequestList from "./pages/RequestList"
-import SingleRequest from "./components/SingleRequest";
-import ContextApiTest from "./pages/ContextApiTest";
+import SingleRequest from "./pages/SingleRequest";
 import { BrowserRouter, Router, Link, Route, Routes } from "react-router-dom";
-import {AppContext} from "./context-api/AppContext"
 import { useAuthContext } from "@asgardeo/auth-react";
 import Login from "./pages/Login";
 import { useEffect } from "react";
@@ -28,11 +26,12 @@ function App() {
           <Routes>
             <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
             <Route path="/Request" element={<RequestList />} />
-            <Route path="/test/:nic" element={<SingleRequest />} />
-            <Route path="/testcon" element={<ContextApiTest />} />
+            <Route path="/single-request/:id" element={<SingleRequest />} />
+
+           
           </Routes>
-          
         </BrowserRouter>  
+      
       
     </div>
   )
