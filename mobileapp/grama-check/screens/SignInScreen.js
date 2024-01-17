@@ -1,22 +1,109 @@
-import React from 'react';
-import { StyleSheet, Text, View, ImageBackground, Image, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
-import { StatusBar } from "expo-status-bar";
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Theme from '../constants/theme';
+import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+import jwtDecode from 'jwt-decode';
+
+WebBrowser.maybeCompleteAuthSession();
+
+const redirectUri = AuthSession.makeRedirectUri();
+
+const TOKEN_ENDPOINT = 'https://api.asgardeo.io/t/hasathcharu/oauth2/token';
+
+const CLIENT_ID = 'QMK8Jwlm0e5WTj7Ij0Jk1lBNSh4a';
 
 export default function ({ navigation, route }) {
+  const discovery = AuthSession.useAutoDiscovery(TOKEN_ENDPOINT);
+  const [tokenResponse, setTokenResponse] = useState({});
+  const [decodedIdToken, setDecodedIdToken] = useState({});
+
+  const [request, result, promptAsync] = AuthSession.useAuthRequest(
+    {
+      redirectUri,
+      clientId: CLIENT_ID,
+      responseType: 'code',
+      scopes: ['openid', 'profile', 'email'],
+    },
+    discovery
+  );
+
+  const getAccessToken = () => {
+    if (result?.params?.code) {
+      fetch(TOKEN_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `grant_type=authorization_code&code=${result?.params?.code}&redirect_uri=${redirectUri}&client_id=${CLIENT_ID}&code_verifier=${request?.codeVerifier}`,
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          setTokenResponse(data);
+          setDecodedIdToken(jwtDecode(data.id_token));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+  useEffect(() => {
+    (async function setResult() {
+      if (result) {
+        if (result.error) {
+          Alert.alert(
+            'Authentication error',
+            result.params.error_description || 'something went wrong'
+          );
+          return;
+        }
+        if (result.type === 'success') {
+          getAccessToken();
+        }
+      }
+    })();
+  }, [result]);
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.bottomSheet}></View>
-      </SafeAreaView>
+    <SafeAreaView>
+      <View style={styles.screen}>
+        <View style={styles.content}>
+          <View style={styles.descContainer}>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              Please sign in first.
+            </H4>
+            <Button
+              size='big'
+              color='shadedPrimary'
+              title='Sign In'
+              onPress={() => promptAsync()}
+            />
+            {decodedIdToken && (
+              <Text>Welcome {decodedIdToken.given_name || ''}!</Text>
+            )}
+            {decodedIdToken && <Text>{decodedIdToken.email}</Text>}
+            <View style={styles.accessTokenBlock}>
+              {decodedIdToken && (
+                <Text>Access Token: {tokenResponse.access_token}</Text>
+              )}
+            </View>
+          </View>
+        </View>
+
+        {/* </ImageBackground> */}
+      </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
+    height: '100%',
+    fontFamily: 'Poppins',
   },
   bgImage: {
     flex: 1,
@@ -28,21 +115,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   descContainer: {
-    alignItems: 'center',
-  },
-  logoFooter: {
-    height: 100,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 20,
-  },
-  imageContainer: {
-    // width: '80%',
-    // height: 70,
-    height: '50%',
-    width: '100%',
-    justifyContent: 'center',
+    width: '90%',
+    // alignItems: 'center',
   },
   logoContainer: {
     width: '80%',
@@ -67,19 +141,4 @@ const styles = StyleSheet.create({
     width: '40%',
     height: '100%',
   },
-
-  bottomSheet: {
-    height: "100%", //change this after design it
-    backgroundColor: "read",
-    width: "100%",
-    borderTopEndRadius: 50,
-    borderTopStartRadius: 50,
-    marginTop: 100,
-  },
-
-  container: {
-    paddingTop: 10,
-    backgroundColor: "blue",
-  },
-
 });

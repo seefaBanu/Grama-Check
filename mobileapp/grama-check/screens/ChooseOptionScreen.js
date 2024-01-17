@@ -3,49 +3,53 @@ import { StyleSheet, Text, View, ImageBackground, Image } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ({ navigation, route }) {
   return (
-    <View style={styles.screen}>
-      {/* <ImageBackground
+    <SafeAreaView>
+      <View style={styles.screen}>
+        {/* <ImageBackground
         source={require('../../assets/start3.jpg')}
         style={styles.bgImage}
         resizeMode='cover'
       > */}
-      <View style={styles.content}>
-        <View style={styles.descContainer}>
-          <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
-          <H4 style={{ ...styles.text, ...styles.description }}>
-            Request your Grama Niladari Certificates.
-          </H4>
-          <Button
-            size='big'
-            color='shadedPrimary'
-            title='Submit New Request'
-            onPress={() => navigation.navigate('NewRequestScreen')}
-          />
-          {/* <Button
+        <View style={styles.content}>
+          <View style={styles.descContainer}>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              Request your Grama Niladari Certificates.
+            </H4>
+            <Button
+              size='big'
+              color='shadedPrimary'
+              title='Submit New Request'
+              onPress={() => navigation.navigate('NewRequestScreen')}
+            />
+            {/* <Button
             size='big'
             color='shadedPrimary'
             title='Track Your Request'
             onPress={() => navigation.navigate('GetStartedScreen')}
           /> */}
-          <Button
-            size='big'
-            color='shadedWarning'
-            title='My Account'
-            onPress={() => navigation.navigate('SignInScreen')}
-          />
+            <Button
+              size='big'
+              color='shadedWarning'
+              title='My Account'
+              onPress={() => navigation.navigate('SignInScreen')}
+            />
+          </View>
         </View>
-      </View>
 
-      {/* </ImageBackground> */}
-    </View>
+        {/* </ImageBackground> */}
+      </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
+    height: '100%',
+    fontFamily: 'Poppins',
   },
   bgImage: {
     flex: 1,

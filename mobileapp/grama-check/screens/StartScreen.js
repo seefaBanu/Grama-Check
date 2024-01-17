@@ -2,53 +2,59 @@ import React from 'react';
 import { StyleSheet, Text, View, ImageBackground, Image } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Theme from '../constants/theme';
 
 export default function ({ navigation, route }) {
   return (
-    <View style={styles.screen}>
-      {/* <ImageBackground
+    <SafeAreaView>
+      <View style={styles.screen}>
+        {/* <ImageBackground
         source={require('../../assets/start3.jpg')}
         style={styles.bgImage}
         resizeMode='cover'
       > */}
-      <View style={styles.content}>
-        <View style={styles.descContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require('../assets/homescreen.png')}
-              style={styles.mainImage}
+        <View style={styles.content}>
+          <View style={styles.descContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={require('../assets/homescreen.png')}
+                style={styles.mainImage}
+              />
+            </View>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              Request your Grama Niladari Certificates.
+            </H4>
+            <Button
+              size='big'
+              color='filledPrimary'
+              title='Get Started'
+              onPress={() => navigation.navigate('ChooseOptionScreen')}
             />
           </View>
-          <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
-          <H4 style={{ ...styles.text, ...styles.description }}>
-            Request your Grama Niladari Certificates.
-          </H4>
-          <Button
-            size='big'
-            color='filledPrimary'
-            title='Get Started'
-            onPress={() => navigation.navigate('ChooseOptionScreen')}
-          />
         </View>
-      </View>
-      <View style={styles.logoFooter}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../assets/SLEmblem.png')}
-            style={styles.logo}
-          />
-          <Image source={require('../assets/choreo.png')} style={styles.logo} />
+        <View style={styles.logoFooter}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../assets/SLEmblem.png')}
+              style={styles.logo}
+            />
+            <Image
+              source={require('../assets/choreo.png')}
+              style={styles.logo}
+            />
+          </View>
         </View>
+        {/* </ImageBackground> */}
       </View>
-      {/* </ImageBackground> */}
-    </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
+    height: '100%',
+    fontFamily: 'Poppins',
   },
   bgImage: {
     flex: 1,
