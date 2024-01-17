@@ -43,6 +43,8 @@ public type Status record {|
     time:Civil submitted;
     time:Civil? address_verified;
     time:Civil? approved;
+    time:Civil? completed;
+    time:Civil? rejected;
 |};
 
 public type StatusOptionalized record {|
@@ -50,6 +52,8 @@ public type StatusOptionalized record {|
     time:Civil submitted?;
     time:Civil? address_verified?;
     time:Civil? approved?;
+    time:Civil? completed?;
+    time:Civil? rejected?;
 |};
 
 public type StatusWithRelations record {|
@@ -65,5 +69,7 @@ public type StatusUpdate record {|
     time:Civil submitted?;
     time:Civil? address_verified?;
     time:Civil? approved?;
+    time:Civil? completed?;
+    time:Civil? rejected?;
 |};
 

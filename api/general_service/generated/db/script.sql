@@ -11,6 +11,8 @@ CREATE TABLE `Status` (
 	`submitted` DATETIME NOT NULL,
 	`address_verified` DATETIME,
 	`approved` DATETIME,
+	`completed` DATETIME,
+	`rejected` DATETIME,
 	PRIMARY KEY(`id`)
 );
 
