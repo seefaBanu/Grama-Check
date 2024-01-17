@@ -3,7 +3,7 @@
     "version": ">= 6.0.0"
   },
   "build": {
-    "development": {
+    "preview": {
       "developmentClient": true,
       "distribution": "internal",
       "android": {
@@ -11,9 +11,7 @@
         "gradleCommand": ":app:assembleRelease"
       }
     },
-    "preview": {
-      "distribution": "internal"
-    },
+
     "production": {}
   },
   "submit": {

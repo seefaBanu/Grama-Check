@@ -11,10 +11,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "scheme": "gramaConnect",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "scheme": "grama-connect",
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hasathcharu.gramaconnect"

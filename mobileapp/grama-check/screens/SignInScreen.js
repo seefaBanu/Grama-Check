@@ -5,7 +5,7 @@ import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -29,7 +29,7 @@ export default function ({ navigation, route }) {
     },
     discovery
   );
-
+  console.log(decodedIdToken);
   const getAccessToken = () => {
     if (result?.params?.code) {
       fetch(TOKEN_ENDPOINT, {
@@ -44,6 +44,7 @@ export default function ({ navigation, route }) {
         })
         .then((data) => {
           setTokenResponse(data);
+          console.log(data.id_token);
           setDecodedIdToken(jwtDecode(data.id_token));
         })
         .catch((err) => {
@@ -83,7 +84,7 @@ export default function ({ navigation, route }) {
             onPress={() => promptAsync()}
           />
           {decodedIdToken && (
-            <Text>Welcome {decodedIdToken.given_name || ''}!</Text>
+            <Text>Welcome {decodedIdToken.first_name || ''}!</Text>
           )}
           {decodedIdToken && <Text>{decodedIdToken.email}</Text>}
           <View style={styles.accessTokenBlock}>
