@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import SingleRequest from '../components/SingleRequest';
 import NavBar from '../components/NavBar';
 import {Tab, THDetails, Table,THead,TBRow } from '../components/Elements';
+import axios from 'axios';
 
 function RequestList() {
   const [selectedTab, setSelectedTab] = useState('All Requests');
   const [searchKeyword, setSearchKeyword] = useState('');
   const naivgate = useNavigate();
+  const [requestList, setRequestList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+
+  useEffect(() => {
+    setIsLoading(true);
+    axios.get(`https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/generalservice/general-80d/v1.0/grama/certificate`)
+    .then((res)=>{
+      setRequestList(res.data)
+    })
+    setIsLoading(false);
+  }, []);
 
   const data = [
     { id: 9001, name: 'jhon', email: 'jhon@gmail.com', nic: '190006667V', date: "10-01-2023", status: 'Pending' ,isReady:true},
@@ -41,7 +54,7 @@ function RequestList() {
     }else if(selectedTab === 'Pending Requests'){
       return item.status === 'Pending';
     }else if(selectedTab === 'Approved Requests'){
-      return item.status === 'Approved';
+      return item.status === 'submitted';
     }else if(selectedTab === 'Rejected Requests'){
       return item.status === 'Rejected';
     }
@@ -85,20 +98,21 @@ function RequestList() {
           </tr>
         </THead>
 
+        {!isLoading && (
         <tbody>
           {filteredDataWithSearch.map((item) => (
             <tr 
             key={item.id} 
             className='border-b-2 round'
-	          onClick={() => naivgate(`/test/${item.nic}`)}
+	          onClick={() => naivgate(`/single-request/${item.nic}`)}
             >
               <td className='text-xs p-2'>{item.id}</td>
               <td className='text-xs p-2'>
                 <h1 className='text-xs'>{item.name}</h1>
-                <h1 className='text-xs font-light'>{item.email}</h1>
+                <h1 className='text-xs font-light'>{item.userEmail}</h1>
               </td>
               <td className='text-xs p-2'>{item.nic}</td>
-              <td className='text-xs p-2'>{item.date}</td>
+              <td className='text-xs p-2'>{item.nic}</td>
               <td className='flex text-xs p-2'>
                 <div
                   className="w-2 my-auto h-2 rounded-full "
@@ -112,6 +126,7 @@ function RequestList() {
             </tr>
           ))}
         </tbody>
+        )}
       </table>
     </div>
     </>

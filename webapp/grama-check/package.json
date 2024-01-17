@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.6.5",
     "@asgardeo/auth-react": "^4.0.0",
+    "axios": "^1.6.5",
     "mochi-ui": "^1.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
