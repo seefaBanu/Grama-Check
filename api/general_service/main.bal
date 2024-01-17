@@ -27,12 +27,6 @@ type CertificateRequestDTO record {|
     string assignedGramiEmail;
 |};
 
-<<<<<<< HEAD
-
-
-type Request record {
-    
-=======
 configurable string identityEndpoint = ?;
 // configurable string addressEndpoint = ?;
 configurable string consumerKey = ?;
@@ -63,7 +57,6 @@ type CreatedMessage record {|
 
 InternalServerErrorMessage failed = {
     body: {message: string `Error connecting to Identity Service.`}
->>>>>>> main
 };
 
 service /general on new http:Listener(9091) {
