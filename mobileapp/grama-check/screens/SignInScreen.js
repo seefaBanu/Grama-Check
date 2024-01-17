@@ -10,7 +10,7 @@ export default function ({ navigation, route }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
-      <View style={styles.bottomSheet}></View>
+      <View style={styles.bottomSheet}><Text>"ddfdf"</Text></View>
       </SafeAreaView>
   );
 }
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
 
   bottomSheet: {
     height: "100%", //change this after design it
-    backgroundColor: "read",
+    backgroundColor: Theme.defaultBackground,
     width: "100%",
     borderTopEndRadius: 50,
     borderTopStartRadius: 50,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 
   container: {
     paddingTop: 10,
-    backgroundColor: "blue",
+    backgroundColor: Theme.primary,
   },
 
 });
