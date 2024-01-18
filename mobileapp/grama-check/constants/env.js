@@ -1,4 +1,4 @@
 export default {
-  backend: 'http://192.168.1.14:4000',
-  GOOGLE_API_KEY: 'AIzaSyCorJgnsZs2Y8q_c4eMqUtUV_0icAmHWhw',
+  backend:
+    'https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/generalservice/general-80d/v1.0',
 };
