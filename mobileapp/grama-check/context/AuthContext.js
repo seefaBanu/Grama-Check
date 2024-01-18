@@ -1,16 +1,17 @@
+import React, { createContext, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { jwtDecode } from 'jwt-decode';
 import * as AuthSession from 'expo-auth-session';
-import React from 'react';
-export const CLIENT_ID = 'QMK8Jwlm0e5WTj7Ij0Jk1lBNSh4a';
 import 'core-js/stable/atob';
 
+export const AuthContext = createContext(null);
 export const TOKEN_ENDPOINT =
   'https://api.asgardeo.io/t/hasathcharu/oauth2/token';
 export const redirectUri = AuthSession.makeRedirectUri();
+export const CLIENT_ID = 'QMK8Jwlm0e5WTj7Ij0Jk1lBNSh4a';
 
-export const useAuth = function () {
-  const [user, setUser] = React.useState(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const checkAuth = async function () {
     try {
       const accessToken = await SecureStore.getItemAsync('accessToken');
@@ -27,7 +28,6 @@ export const useAuth = function () {
   };
   React.useEffect(() => {
     checkAuth();
-    console.log('hi');
   }, []);
   const saveAuth = async function (accessToken, idToken) {
     try {
@@ -62,6 +62,9 @@ export const useAuth = function () {
       console.log(err);
     }
   };
-  console.log('user hook', user);
-  return { user, saveAuth, logout };
+  return (
+    <AuthContext.Provider value={{ user, logout, saveAuth }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

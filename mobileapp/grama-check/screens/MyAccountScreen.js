@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
-import { useAuth } from '../auth';
+import { AuthContext } from '../context/AuthContext';
 import Header from '../components/Header';
 
 export default function ({ navigation, route }) {
-  const { logout } = useAuth();
+  const { logout } = useContext(AuthContext);
   return (
     <SafeAreaView>
       <View style={styles.screen}>

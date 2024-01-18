@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
@@ -6,11 +6,16 @@ import Theme from '../constants/theme';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 WebBrowser.maybeCompleteAuthSession();
-import { CLIENT_ID, TOKEN_ENDPOINT, redirectUri, useAuth } from '../auth';
+import {
+  CLIENT_ID,
+  TOKEN_ENDPOINT,
+  redirectUri,
+  AuthContext,
+} from '../context/AuthContext';
 
 export default function ({ navigation, route }) {
   const discovery = AuthSession.useAutoDiscovery(TOKEN_ENDPOINT);
-  const { saveAuth } = useAuth();
+  const { saveAuth } = useContext(AuthContext);
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
       redirectUri,
@@ -59,9 +64,23 @@ export default function ({ navigation, route }) {
     })();
   }, [result]);
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style='light' />
-      <View style={styles.bottomSheet}></View>
+    <SafeAreaView>
+      <View style={styles.screen}>
+        <View style={styles.content}>
+          <View style={styles.descContainer}>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              Please sign in first.
+            </H4>
+            <Button
+              size='big'
+              color='shadedPrimary'
+              title='Sign In'
+              onPress={() => promptAsync()}
+            />
+          </View>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
