@@ -1,52 +1,34 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  SafeAreaView,
-} from 'react-native';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
+import { useAuth } from '../auth';
+import Header from '../components/Header';
 
 export default function ({ navigation, route }) {
+  const { logout } = useAuth();
   return (
     <SafeAreaView>
       <View style={styles.screen}>
-        {/* <ImageBackground
-        source={require('../../assets/start3.jpg')}
-        style={styles.bgImage}
-        resizeMode='cover'
-      > */}
+        <Header back={true} home={true} />
+
         <View style={styles.content}>
           <View style={styles.descContainer}>
-            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>
+              Haritha Hasathcharu
+            </H2>
             <H4 style={{ ...styles.text, ...styles.description }}>
-              Request your Grama Niladari Certificates.
+              haritha@hasathcharu.com
             </H4>
             <Button
               size='big'
-              color='shadedPrimary'
-              title='Submit New Request'
-              onPress={() => navigation.navigate('NewRequestScreen')}
-            />
-            {/* <Button
-            size='big'
-            color='shadedPrimary'
-            title='Track Your Request'
-            onPress={() => navigation.navigate('GetStartedScreen')}
-          /> */}
-            <Button
-              size='big'
-              color='shadedWarning'
-              title='My Account'
-              onPress={() => navigation.navigate('MyAccountScreen')}
+              color='shadedDanger'
+              title='Log Out'
+              onPress={() => logout()}
             />
           </View>
         </View>
-
-        {/* </ImageBackground> */}
       </View>
     </SafeAreaView>
   );

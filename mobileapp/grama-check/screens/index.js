@@ -4,3 +4,4 @@ export { default as NewRequestScreen } from './NewRequestScreen';
 export { default as RequestStatusScreen } from './RequestStatusScreen';
 export { default as SignInScreen } from './SignInScreen';
 export { default as MessageScreen } from './MessageScreen';
+export { default as MyAccountScreen } from './MyAccountScreen';

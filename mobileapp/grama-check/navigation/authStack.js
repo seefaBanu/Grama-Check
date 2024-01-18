@@ -19,41 +19,6 @@ export default function App(props) {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name='NewRequestScreen'
-          component={Screens.NewRequestScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name='ChooseOptionScreen'
-          component={Screens.ChooseOptionScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        {/* <Stack.Screen
-          name='SignInScreen'
-          component={Screens.SignInScreen}
-          options={{
-            headerShown: false,
-          }}
-        /> */}
-        <Stack.Screen
-          name='RequestStatusScreen'
-          component={Screens.RequestStatusScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name='MessageScreen'
-          component={Screens.MessageScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
       </Stack.Navigator>
     </NavigationContainer>
   );

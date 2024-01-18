@@ -5,22 +5,12 @@ import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import { jwtDecode } from 'jwt-decode';
-import 'core-js/stable/atob';
-
 WebBrowser.maybeCompleteAuthSession();
-
-const redirectUri = AuthSession.makeRedirectUri();
-
-const TOKEN_ENDPOINT = 'https://api.asgardeo.io/t/hasathcharu/oauth2/token';
-
-const CLIENT_ID = 'QMK8Jwlm0e5WTj7Ij0Jk1lBNSh4a';
+import { CLIENT_ID, TOKEN_ENDPOINT, redirectUri, useAuth } from '../auth';
 
 export default function ({ navigation, route }) {
   const discovery = AuthSession.useAutoDiscovery(TOKEN_ENDPOINT);
-  const [tokenResponse, setTokenResponse] = useState({});
-  const [decodedIdToken, setDecodedIdToken] = useState({});
-
+  const { saveAuth } = useAuth();
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
       redirectUri,
@@ -30,7 +20,7 @@ export default function ({ navigation, route }) {
     },
     discovery
   );
-  const getAccessToken = () => {
+  const getAccessToken = async function () {
     if (result?.params?.code) {
       fetch(TOKEN_ENDPOINT, {
         method: 'POST',
@@ -43,8 +33,9 @@ export default function ({ navigation, route }) {
           return response.json();
         })
         .then((data) => {
-          setTokenResponse(data);
-          setDecodedIdToken(jwtDecode(data.id_token));
+          if (!data.access_token || !data.id_token)
+            throw new Error('Authentication error');
+          return saveAuth(data.access_token, data.id_token);
         })
         .catch((err) => {
           console.log('error', err);
@@ -57,7 +48,7 @@ export default function ({ navigation, route }) {
         if (result.error) {
           Alert.alert(
             'Authentication error',
-            result.params.error_description || 'something went wrong'
+            result.params.error_description || 'Something went wrong'
           );
           return;
         }
@@ -68,40 +59,24 @@ export default function ({ navigation, route }) {
     })();
   }, [result]);
   return (
-    // <SafeAreaView>
-    <View style={styles.screen}>
-      <View style={styles.content}>
-        <View style={styles.descContainer}>
-          <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
-          <H4 style={{ ...styles.text, ...styles.description }}>
-            Please sign in first.
-          </H4>
-          <Button
-            size='big'
-            color='shadedPrimary'
-            title='Sign In'
-            onPress={() => promptAsync()}
-          />
-          {decodedIdToken && (
-            <Text>
-              Welcome{' '}
-              {decodedIdToken.given_name + ' ' + decodedIdToken.family_name ||
-                ''}
-              !
-            </Text>
-          )}
-          {decodedIdToken && <Text>{decodedIdToken.email}</Text>}
-          <View style={styles.accessTokenBlock}>
-            {decodedIdToken && (
-              <Text>Access Token: {tokenResponse.access_token}</Text>
-            )}
+    <SafeAreaView>
+      <View style={styles.screen}>
+        <View style={styles.content}>
+          <View style={styles.descContainer}>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              Please sign in first.
+            </H4>
+            <Button
+              size='big'
+              color='shadedPrimary'
+              title='Sign In'
+              onPress={() => promptAsync()}
+            />
           </View>
         </View>
       </View>
-
-      {/* </ImageBackground> */}
-    </View>
-    // </SafeAreaView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
