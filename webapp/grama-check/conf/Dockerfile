@@ -8,7 +8,7 @@ RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:latest
 
-COPY conf/nginx.conf /etc/nginx/conf.d/
+COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build-stage /grama-check/dist /usr/share/nginx/html
 USER 10014
