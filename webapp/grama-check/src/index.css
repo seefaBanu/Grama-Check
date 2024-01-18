@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.mochiCustom{
+    --dark-3: #f5f1f1 !important;
+    --tertiary: #a1a0a4 !important;
+}
