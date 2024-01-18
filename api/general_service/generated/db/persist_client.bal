@@ -28,11 +28,14 @@ public isolated client class Client {
                 address: {columnName: "address"},
                 statusId: {columnName: "statusId"},
                 userEmail: {columnName: "userEmail"},
+                userName: {columnName: "userName"},
                 assignedGramiEmail: {columnName: "assignedGramiEmail"},
                 "status.id": {relation: {entityName: "status", refField: "id"}},
                 "status.submitted": {relation: {entityName: "status", refField: "submitted"}},
                 "status.address_verified": {relation: {entityName: "status", refField: "address_verified"}},
-                "status.approved": {relation: {entityName: "status", refField: "approved"}}
+                "status.approved": {relation: {entityName: "status", refField: "approved"}},
+                "status.completed": {relation: {entityName: "status", refField: "completed"}},
+                "status.rejected": {relation: {entityName: "status", refField: "rejected"}}
             },
             keyFields: ["id"],
             joinMetadata: {status: {entity: Status, fieldName: "status", refTable: "Status", refColumns: ["id"], joinColumns: ["statusId"], 'type: psql:ONE_TO_ONE}}
@@ -45,11 +48,14 @@ public isolated client class Client {
                 submitted: {columnName: "submitted"},
                 address_verified: {columnName: "address_verified"},
                 approved: {columnName: "approved"},
+                completed: {columnName: "completed"},
+                rejected: {columnName: "rejected"},
                 "certificaterequest.id": {relation: {entityName: "certificaterequest", refField: "id"}},
                 "certificaterequest.nic": {relation: {entityName: "certificaterequest", refField: "nic"}},
                 "certificaterequest.address": {relation: {entityName: "certificaterequest", refField: "address"}},
                 "certificaterequest.statusId": {relation: {entityName: "certificaterequest", refField: "statusId"}},
                 "certificaterequest.userEmail": {relation: {entityName: "certificaterequest", refField: "userEmail"}},
+                "certificaterequest.userName": {relation: {entityName: "certificaterequest", refField: "userName"}},
                 "certificaterequest.assignedGramiEmail": {relation: {entityName: "certificaterequest", refField: "assignedGramiEmail"}}
             },
             keyFields: ["id"],
