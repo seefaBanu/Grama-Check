@@ -12,4 +12,4 @@ COPY --from=build-stage /grama-check/dist /usr/share/nginx/html
 USER 10014
 EXPOSE 8080 
 COPY . .
-CMD [ "npm" , "run" , "dev" ]
+CMD [ "nginx" , "-g" , "daemon off;" ]
