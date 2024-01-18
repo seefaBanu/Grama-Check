@@ -13,7 +13,7 @@ export default function Login(props) {
   return (
     <div>
       {state ?. isAuthenticated ? (
-        window.location.href = '/request'
+        Navigate('/Request')
       ):
       (
         <div> 
