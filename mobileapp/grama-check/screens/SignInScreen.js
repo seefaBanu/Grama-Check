@@ -59,23 +59,9 @@ export default function ({ navigation, route }) {
     })();
   }, [result]);
   return (
-    <SafeAreaView>
-      <View style={styles.screen}>
-        <View style={styles.content}>
-          <View style={styles.descContainer}>
-            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
-            <H4 style={{ ...styles.text, ...styles.description }}>
-              Please sign in first.
-            </H4>
-            <Button
-              size='big'
-              color='shadedPrimary'
-              title='Sign In'
-              onPress={() => promptAsync()}
-            />
-          </View>
-        </View>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style='light' />
+      <View style={styles.bottomSheet}></View>
     </SafeAreaView>
   );
 }
@@ -119,5 +105,19 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: '40%',
     height: '100%',
+  },
+
+  bottomSheet: {
+    height: '100%', //change this after design it
+    backgroundColor: 'read',
+    width: '100%',
+    borderTopEndRadius: 50,
+    borderTopStartRadius: 50,
+    marginTop: 100,
+  },
+
+  container: {
+    paddingTop: 10,
+    backgroundColor: 'blue',
   },
 });

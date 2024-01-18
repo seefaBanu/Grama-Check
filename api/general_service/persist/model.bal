@@ -7,6 +7,7 @@ type CertificateRequest record {|
     string address;
     Status status;
     string userEmail;
+    string userName;
     string assignedGramiEmail;
 |};
 
@@ -15,6 +16,8 @@ type Status record {|
     time:Civil submitted;
     time:Civil? address_verified;
     time:Civil? approved;
+    time:Civil? completed;
+    time:Civil? rejected;
     CertificateRequest? certificaterequest;
 |};
 

@@ -1,0 +1,14 @@
+### Get a specific person details passing nic
+GET http://localhost:9091/general/user/certificate/haritha@hasathcharu.com
+
+### Post a specific person nic
+POST http://localhost:9090/identity/verify-nic
+content-type: application/json
+
+{
+    "nic":"34e"
+}
+
+### Get a specific person details passing nic
+GET http://localhost:9091/general/userApproved/certificate/fa552efc-1eba-460f-a011-2d8f24f287e9
+
