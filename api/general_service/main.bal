@@ -10,6 +10,7 @@ import ballerina/uuid;
 type NewCertificateRequest record {|
     string nic;
     string address;
+    string gramaEmail;
     // string userName;
     // string grama_area?;
 |};
@@ -108,14 +109,26 @@ type AddressCheckDto record {
     boolean matched;
 };
 
+
+
 service /general on new http:Listener(9091) {
     private final db:Client dbClient;
     function init() returns error? {
         self.dbClient = check new ();
     }
 
-    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError|http:Created|http:NotFound|error {
-
+    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError|http:Created|http:NotFound|http:Forbidden|error {
+        string email = "haritha@hasathcharu.com";
+        stream<CertificateRequestDTO, persist:Error?> certificateRequestsStream = self.dbClient->/certificaterequests;
+        CertificateRequestDTO[]|persist:Error certificates = from CertificateRequestDTO certificate in certificateRequestsStream
+            where certificate.userEmail == email && certificate.status.completed == null && certificate.status.rejected == null
+            select certificate;
+        if certificates is persist:Error {
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        if(certificates.length() != 0){
+            return http:FORBIDDEN;
+        }
         //confirm identity with identity service
 
         http:Client identityClient = check new (identityEndpoint,
@@ -163,7 +176,7 @@ service /general on new http:Listener(9091) {
         });
 
         db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null, rejected: null, completed: null};
-        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com", userName: person.name, checkedAddress: null};
+        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail:email, assignedGramiEmail:certificateRequest.gramaEmail, userName: person.name, checkedAddress: null};
         if address is AddressCheckDto {
             newCertificateRequest.checkedAddress = address.address;
             if (address.matched) {
@@ -232,7 +245,7 @@ service /general on new http:Listener(9091) {
         return certificatePolicedCheckedRequestDTO;
     }
 
-    resource function get user/certificate/[string email]() returns http:InternalServerError|CertificateRequestDTO|http:Forbidden {
+    resource function get user/certificate/[string email]() returns http:InternalServerError|CertificateRequestDTO|http:NotFound {
 
         // CertificateRequestDTO|persist:Error certificateRequest = self.dbClient->/certificaterequests();
         // string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
@@ -240,10 +253,13 @@ service /general on new http:Listener(9091) {
         // stream<Request, persist:Error?> certificateRequest = self.dbClient->/certificaterequests;
         stream<CertificateRequestDTO, persist:Error?> certificateRequestsStream = self.dbClient->/certificaterequests;
         CertificateRequestDTO[]|persist:Error certificates = from CertificateRequestDTO certificate in certificateRequestsStream
-            where certificate.userEmail == email && certificate.status.completed == null
+            where certificate.userEmail == email && certificate.status.completed == null && certificate.status.rejected == null
             select certificate;
         if certificates is persist:Error {
             return http:INTERNAL_SERVER_ERROR;
+        }
+        if(certificates.length() == 0){
+            return http:NOT_FOUND;
         }
         return certificates[0];
         // }  else if certificateRequest.status.completed==null && certificateRequest.status.rejected ==null{
@@ -277,6 +293,31 @@ service /general on new http:Listener(9091) {
         }
     }
 
+    resource function put grama/rejected/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+        CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+
+        if (certificateRequest is persist:NotFoundError) {
+            return http:NOT_FOUND;
+        } else if (certificateRequest is persist:Error) {
+            return http:INTERNAL_SERVER_ERROR;
+        } else if (certificateRequest is db:CertificateRequest) {
+            string statusId = certificateRequest.statusId;
+
+            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+
+                rejected: time:utcToCivil(time:utcNow())
+
+            });
+
+            if (result is persist:Error) {
+                return http:INTERNAL_SERVER_ERROR;
+            } else {
+
+                return http:OK;
+            }
+        }
+    }
+
     resource function put grama/ready/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
         db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
         if certificateRequest is persist:NotFoundError {
@@ -297,5 +338,15 @@ service /general on new http:Listener(9091) {
         }
         return http:OK;
     }
+
+    resource function get gramadivisions() returns db:GramaDivisionOptionalized[]|http:InternalServerError|error {
+           stream<db:GramaDivisionOptionalized, persist:Error?> gramaDivisions = self.dbClient->/gramadivisions;
+        return from db:GramaDivisionOptionalized division in gramaDivisions
+            select division;
+    }
+
+            
+
+           
 
 }

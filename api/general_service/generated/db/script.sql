@@ -5,6 +5,17 @@
 
 DROP TABLE IF EXISTS `CertificateRequest`;
 DROP TABLE IF EXISTS `Status`;
+DROP TABLE IF EXISTS `GramaDivision`;
+
+CREATE TABLE `GramaDivision` (
+	`id` VARCHAR(191) NOT NULL,
+	`gnDivision` VARCHAR(191) NOT NULL,
+	`province` VARCHAR(191) NOT NULL,
+	`district` VARCHAR(191) NOT NULL,
+	`divisionalSecretariat` VARCHAR(191) NOT NULL,
+	`gramiEmail` VARCHAR(191) NOT NULL,
+	PRIMARY KEY(`id`)
+);
 
 CREATE TABLE `Status` (
 	`id` VARCHAR(191) NOT NULL,

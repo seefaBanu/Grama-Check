@@ -22,3 +22,12 @@ type Status record {|
     CertificateRequest? certificaterequest;
 |};
 
+type GramaDivision record {|
+    readonly string id;
+    string gnDivision;
+    string province;
+    string district;
+    string divisionalSecretariat;
+    string gramiEmail;
+|};
+
