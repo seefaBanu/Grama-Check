@@ -10,6 +10,7 @@ import ballerinax/persist.sql as psql;
 
 const CERTIFICATE_REQUEST = "certificaterequests";
 const STATUS = "statuses";
+const GRAMA_DIVISION = "gramadivisions";
 
 public isolated client class Client {
     *persist:AbstractPersistClient;
@@ -62,6 +63,19 @@ public isolated client class Client {
             },
             keyFields: ["id"],
             joinMetadata: {certificaterequest: {entity: CertificateRequest, fieldName: "certificaterequest", refTable: "CertificateRequest", refColumns: ["statusId"], joinColumns: ["id"], 'type: psql:ONE_TO_ONE}}
+        },
+        [GRAMA_DIVISION] : {
+            entityName: "GramaDivision",
+            tableName: "GramaDivision",
+            fieldMetadata: {
+                id: {columnName: "id"},
+                gnDivision: {columnName: "gnDivision"},
+                province: {columnName: "province"},
+                district: {columnName: "district"},
+                divisionalSecretariat: {columnName: "divisionalSecretariat"},
+                gramiEmail: {columnName: "gramiEmail"}
+            },
+            keyFields: ["id"]
         }
     };
 
@@ -73,7 +87,8 @@ public isolated client class Client {
         self.dbClient = dbClient;
         self.persistClients = {
             [CERTIFICATE_REQUEST] : check new (dbClient, self.metadata.get(CERTIFICATE_REQUEST), psql:MYSQL_SPECIFICS),
-            [STATUS] : check new (dbClient, self.metadata.get(STATUS), psql:MYSQL_SPECIFICS)
+            [STATUS] : check new (dbClient, self.metadata.get(STATUS), psql:MYSQL_SPECIFICS),
+            [GRAMA_DIVISION] : check new (dbClient, self.metadata.get(GRAMA_DIVISION), psql:MYSQL_SPECIFICS)
         };
     }
 
@@ -150,6 +165,45 @@ public isolated client class Client {
         psql:SQLClient sqlClient;
         lock {
             sqlClient = self.persistClients.get(STATUS);
+        }
+        _ = check sqlClient.runDeleteQuery(id);
+        return result;
+    }
+
+    isolated resource function get gramadivisions(GramaDivisionTargetType targetType = <>, sql:ParameterizedQuery whereClause = ``, sql:ParameterizedQuery orderByClause = ``, sql:ParameterizedQuery limitClause = ``, sql:ParameterizedQuery groupByClause = ``) returns stream<targetType, persist:Error?> = @java:Method {
+        'class: "io.ballerina.stdlib.persist.sql.datastore.MySQLProcessor",
+        name: "query"
+    } external;
+
+    isolated resource function get gramadivisions/[string id](GramaDivisionTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+        'class: "io.ballerina.stdlib.persist.sql.datastore.MySQLProcessor",
+        name: "queryOne"
+    } external;
+
+    isolated resource function post gramadivisions(GramaDivisionInsert[] data) returns string[]|persist:Error {
+        psql:SQLClient sqlClient;
+        lock {
+            sqlClient = self.persistClients.get(GRAMA_DIVISION);
+        }
+        _ = check sqlClient.runBatchInsertQuery(data);
+        return from GramaDivisionInsert inserted in data
+            select inserted.id;
+    }
+
+    isolated resource function put gramadivisions/[string id](GramaDivisionUpdate value) returns GramaDivision|persist:Error {
+        psql:SQLClient sqlClient;
+        lock {
+            sqlClient = self.persistClients.get(GRAMA_DIVISION);
+        }
+        _ = check sqlClient.runUpdateQuery(id, value);
+        return self->/gramadivisions/[id].get();
+    }
+
+    isolated resource function delete gramadivisions/[string id]() returns GramaDivision|persist:Error {
+        GramaDivision result = check self->/gramadivisions/[id].get();
+        psql:SQLClient sqlClient;
+        lock {
+            sqlClient = self.persistClients.get(GRAMA_DIVISION);
         }
         _ = check sqlClient.runDeleteQuery(id);
         return result;

@@ -277,6 +277,31 @@ service /general on new http:Listener(9091) {
         }
     }
 
+    resource function put grama/rejected/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+        CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+
+        if (certificateRequest is persist:NotFoundError) {
+            return http:NOT_FOUND;
+        } else if (certificateRequest is persist:Error) {
+            return http:INTERNAL_SERVER_ERROR;
+        } else if (certificateRequest is db:CertificateRequest) {
+            string statusId = certificateRequest.statusId;
+
+            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+
+                rejected: time:utcToCivil(time:utcNow())
+
+            });
+
+            if (result is persist:Error) {
+                return http:INTERNAL_SERVER_ERROR;
+            } else {
+
+                return http:OK;
+            }
+        }
+    }
+
     resource function put grama/ready/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
         db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
         if certificateRequest is persist:NotFoundError {
