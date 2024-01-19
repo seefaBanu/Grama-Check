@@ -9,6 +9,14 @@ type UserDto record {|
     string address;
 |};
 
+type NotMatch record {|
+    *http:BadRequest;
+|};
+
+type Match record {|
+    *http:Ok;
+|};
+
 service /address\-check on new http:Listener(9090) {
     private final db:Client dbClient;
 
@@ -16,7 +24,7 @@ service /address\-check on new http:Listener(9090) {
         self.dbClient = check new ();
     }
 
-    resource function post .(UserDto userDto) returns http:InternalServerError|http:BadRequest|http:NotFound|http:Ok {
+    resource function post .(UserDto userDto) returns http:InternalServerError|http:BadRequest|http:NotFound|http:Ok|UserDto {
 
         UserDto|persist:Error user = self.dbClient->/users/[userDto.nic]();
         if (user is persist:Error) {
@@ -27,9 +35,11 @@ service /address\-check on new http:Listener(9090) {
         }
 
         if (string:equalsIgnoreCaseAscii(string:trim(user.address), string:trim(userDto.address))) {
-            return http:OK;
+            Match details = {body: {nic: user.nic, address: user.address}};
+            return details;
         } else {
-            return http:BAD_REQUEST;
+            NotMatch details = {body: {nic: user.nic, address: user.address}};
+            return details;
         }
 
         //have to remove white spaces
