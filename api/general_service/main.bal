@@ -19,6 +19,9 @@ type CertificateRequestDTO record {|
     string nic;
     string address;
     string? checkedAddress;
+    string userEmail;
+    string userName;
+    string assignedGramiEmail;
     record {|
         time:Civil submitted;
         time:Civil? address_verified;
@@ -26,16 +29,20 @@ type CertificateRequestDTO record {|
         time:Civil? completed;
         time:Civil? rejected;
     |} status;
-    string userEmail;
-    string userName;
-    string assignedGramiEmail;
+|};
+
+type CertificatePolicedCheckedRequestDTO record {|
+    *CertificateRequestDTO;
+    PoliceCase[] policeCases;
 |};
 
 configurable string identityEndpoint = ?;
 configurable string addressEndpoint = ?;
+configurable string policeEndpoint = ?;
 configurable string consumerKey = ?;
 configurable string identityConsumerSecret = ?;
 configurable string addressConsumerSecret = ?;
+configurable string policeConsumerSecret = ?;
 configurable string tokenEndpoint = ?;
 
 type Person record {|
@@ -45,6 +52,13 @@ type Person record {|
     string job;
     string gender;
 
+|};
+
+type PoliceCase record {|
+    int caseId;
+    string citizenNic;
+    string issue;
+    time:Date date;
 |};
 
 type NotFoundErrorMessage record {|
@@ -62,6 +76,10 @@ type CreatedMessage record {|
 
 InternalServerErrorMessage identityFailed = {
     body: {message: string `Error connecting to Identity Service.`}
+};
+
+InternalServerErrorMessage policeFailed = {
+    body: {message: string `Error connecting to Police Service.`}
 };
 
 InternalServerErrorMessage failed = {
@@ -177,13 +195,41 @@ service /general on new http:Listener(9091) {
             select certificateRequest;
     }
 
-    resource function get grama/certificate/[string id]() returns CertificateRequestDTO|http:NotFound|error {
+    resource function get grama/certificate/[string id]() returns CertificatePolicedCheckedRequestDTO|http:NotFound|http:InternalServerError|error {
         CertificateRequestDTO|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
-        //add police check integration
-        if certificateRequest is persist:NotFoundError {
-            return http:NOT_FOUND;
+        if certificateRequest is persist:Error {
+            if certificateRequest is persist:NotFoundError {
+                return http:NOT_FOUND;
+            }
+            return http:INTERNAL_SERVER_ERROR;
         }
-        return certificateRequest;
+
+        // police check integration
+
+        http:Client policeClient = check new (policeEndpoint,
+            auth = {
+                tokenUrl: tokenEndpoint,
+                clientId: consumerKey,
+                clientSecret: policeConsumerSecret,
+                clientConfig: {
+                    secureSocket: {
+                        disable: true
+                    }
+                }
+            }
+        );
+        PoliceCase[]|http:Error cases = policeClient->/.post({
+            nic: certificateRequest.nic
+        });
+        if (cases is http:Error) {
+
+            return policeFailed;
+        }
+        CertificatePolicedCheckedRequestDTO certificatePolicedCheckedRequestDTO = {
+            ...certificateRequest,
+            policeCases: cases
+        };
+        return certificatePolicedCheckedRequestDTO;
     }
 
     resource function get user/certificate/[string email]() returns http:InternalServerError|CertificateRequestDTO|http:Forbidden {
@@ -206,7 +252,7 @@ service /general on new http:Listener(9091) {
 
     }
 
-    resource function put userApproved/certificate/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+    resource function put grama/approved/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
         CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
 
         if (certificateRequest is persist:NotFoundError) {
@@ -231,19 +277,19 @@ service /general on new http:Listener(9091) {
         }
     }
 
-    resource function put grama/ready(ReadyDto readyDto) returns http:InternalServerError|http:NotFound|http:Ok|persist:Error {
-        db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[readyDto.id]();
+    resource function put grama/ready/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+        db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
         if certificateRequest is persist:NotFoundError {
             return http:NOT_FOUND;
         }
         else if (certificateRequest is persist:Error) {
-            log:printError("Error retrieving certificate request for ID: " + readyDto.id + ", Error: " + certificateRequest.message());
+            log:printError("Error retrieving certificate request for ID: " + id + ", Error: " + certificateRequest.message());
             return http:INTERNAL_SERVER_ERROR;
         }
         else if (certificateRequest is db:CertificateRequest) {
             string statusId = certificateRequest.statusId;
             db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
-                completed: readyDto.isReady ? time:utcToCivil(time:utcNow()) : null
+                completed: time:utcToCivil(time:utcNow())
             });
             if (result is persist:Error) {
                 return http:INTERNAL_SERVER_ERROR;
