@@ -16,15 +16,17 @@ function RequestList() {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get(`https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/generalservice/general-80d/v1.0/grama/certificate`)
+    axios.get(`https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/generalservice/general-80d/v1.0/grama/certificate
+    `)
     .then((res)=>{
       setRequestList(res.data)
+      console.log(res.data) 
     })
     setIsLoading(false);
   }, []);
 
   const data = [
-    { id: 9001, name: 'jhon', email: 'jhon@gmail.com', nic: '190006667V', date: "10-01-2023", status: 'Pending' ,isReady:true},
+    { id: "01ddf599-8991-4f5d-8b97-4c1122f567a3" , name: 'jhon', email: 'jhon@gmail.com', nic: '190006667V', date: "10-01-2023", status: 'Pending' ,isReady:true},
     { id: 9872, name: 'mary', email: 'mary@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Rejected' },
     { id: 10893, name: 'malliban', email: 'malliban@gmail.com', nic: '990006667V', date: "10-01-2023", status: 'Approved' },
     // Add more data as needed
@@ -100,11 +102,11 @@ function RequestList() {
 
         {!isLoading && (
         <tbody>
-          {filteredDataWithSearch.map((item) => (
+          {requestList  .map((item) => (
             <tr 
             key={item.id} 
             className='border-b-2 round'
-	          onClick={() => naivgate(`/single-request/${item.nic}`)}
+	          onClick={() => naivgate(`/single-request/${item.id}`)}
             >
               <td className='text-xs p-2'>{item.id}</td>
               <td className='text-xs p-2'>

@@ -1,8 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import { useFonts } from 'expo-font';
 import RootNavigation from './navigation/index';
-
+import { AuthProvider } from './context/AuthContext';
 export default function App() {
   const [fonts] = useFonts({
     Poppins: require('./assets/fonts/Poppins-Medium.ttf'),
@@ -10,14 +8,9 @@ export default function App() {
     PoppinsBold: require('./assets/fonts/Poppins-Bold.ttf'),
   });
   if (!fonts) return null;
-  return <RootNavigation />;
+  return (
+    <AuthProvider>
+      <RootNavigation />
+    </AuthProvider>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
