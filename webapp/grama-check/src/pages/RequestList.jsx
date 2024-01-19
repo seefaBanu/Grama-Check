@@ -20,7 +20,8 @@ function RequestList() {
     `)
     .then((res)=>{
       setRequestList(res.data)
-      console.log(res.data) 
+      console.log(res.data)
+      console.log(requestList) 
     })
     setIsLoading(false);
   }, []);
@@ -34,12 +35,16 @@ function RequestList() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Pending':
+      case 'Submitted':
         return 'blue';
       case 'Approved':
         return 'green';
       case 'Rejected':
         return 'red';
+      case 'Address Verified':
+        return 'yellow';
+      case 'Completed':
+        return 'purple';
 
       default:
         return 'gray'; // Default color for unknown status
@@ -50,18 +55,50 @@ function RequestList() {
     setSelectedTab(tab);
   };
 
-  const filteredData = data.filter((item) => {
+  const dateFormatter = (date) => {
+  const submittedDate = date
+    ? new Date(
+      date.year,
+      date.month - 1, // Months are zero-based
+      date.day,
+      date.hour,
+      date.minute,
+      date.second
+      )
+    : null;
+
+  const dateFormatter = new Intl.DateTimeFormat('en', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true, // Enable 12-hour format
+  });
+
+  const formattedSubmittedDate = submittedDate ? dateFormatter.format(submittedDate) : '';
+  
+  return formattedSubmittedDate;}
+
+  const filteredData = requestList.filter((item) => {
     if (selectedTab === 'All Requests') {
       return true; // Show all requests
-    }else if(selectedTab === 'Pending Requests'){
-      return item.status === 'Pending';
-    }else if(selectedTab === 'Approved Requests'){
-      return item.status === 'submitted';
-    }else if(selectedTab === 'Rejected Requests'){
-      return item.status === 'Rejected';
+    }else if (selectedTab === 'Rejected') {
+      return item.status.rejected != null;
+    }else if (selectedTab === 'Completed') {
+      return item.status.completed != null; 
+    } else if (selectedTab === 'Approved') {
+      return item.status.approved != null && item.status.completed == null;
+    }else if (selectedTab === 'Address Verified') {
+      return item.status.address_verified != null && item.status.approved == null && item.status.rejected == null && item.status.completed == null;
+    }else if (selectedTab === 'Pending') {
+      return item.status.submitted != null && item.status.approved == null && item.status.rejected == null && item.status.completed == null && item.status.address_verified == null;
     }
+    
     return item.status === selectedTab;
   });
+  
 
   const handleSearch = (keyword) => {
     setSearchKeyword(keyword);
@@ -70,6 +107,23 @@ function RequestList() {
   const filteredDataWithSearch = filteredData.filter((item) =>
     item.nic.toLowerCase().includes(searchKeyword.toLowerCase())
   );
+
+
+  const getLatestStatus = (status) => {
+    if (status.rejected != null) {
+      return 'Rejected';
+    }else if(status.completed != null){
+      return 'Completed';
+    } else if (status.approved != null) {
+      return 'Approved';
+    } else if (status.address_verified != null) {
+      return 'Address Verified';
+    } else if (status.submitted != null) {
+      return 'Submitted';
+    }
+    return 'Unknown';
+  }
+
 
 
   return (
@@ -85,44 +139,46 @@ function RequestList() {
       <div className='flex flex-start mb-2 '>
       ` <Tab tabName="All Requests" selectedTab={selectedTab} handleTabClick={handleTabClick} />
         <Tab tabName="Pending" selectedTab={selectedTab} handleTabClick={handleTabClick} />
+        <Tab tabName="Address Verified" selectedTab={selectedTab} handleTabClick={handleTabClick} />
         <Tab tabName="Approved" selectedTab={selectedTab} handleTabClick={handleTabClick} />
+        <Tab tabName="Completed" selectedTab={selectedTab} handleTabClick={handleTabClick} />
         <Tab tabName="Rejected" selectedTab={selectedTab} handleTabClick={handleTabClick} />
       </div>
       
       <table   className="table-auto flex-row w-full border shadow-sm rounded-lg">
-        <THead >
+        <thead className='bg-gray-100 rounded-2xl text-slate-500' >
           <tr className='text-left h-10 '>
-            <THDetails tableHeading='Request ID'/>
-            <THDetails tableHeading='Basic Info'/>
-            <THDetails tableHeading='Nic'/>
-            <THDetails tableHeading='Requested Date'/>
-            <THDetails tableHeading='Status' />
+            <th className='font-medium p-2'> Name</th>
+            <th className='font-medium p-2'> Email</th>
+            <th className='font-medium p-2'> Nic</th>
+            <th className='font-medium p-2'> Requested Date</th>
+            <th className='font-medium p-2'> Status</th>
+           
           </tr>
-        </THead>
+        </thead>
 
         {!isLoading && (
         <tbody>
-          {requestList  .map((item) => (
+          {filteredDataWithSearch.map((item) => (
             <tr 
             key={item.id} 
             className='border-b-2 round'
 	          onClick={() => naivgate(`/single-request/${item.id}`)}
             >
-              <td className='text-xs p-2'>{item.id}</td>
+              <td className='text-xs p-2'>{item.userName}</td>
               <td className='text-xs p-2'>
-                <h1 className='text-xs'>{item.name}</h1>
                 <h1 className='text-xs font-light'>{item.userEmail}</h1>
               </td>
               <td className='text-xs p-2'>{item.nic}</td>
-              <td className='text-xs p-2'>{item.nic}</td>
+              <td className='text-xs p-2'>{dateFormatter(item.status.submitted)}</td>
               <td className='flex text-xs p-2'>
                 <div
                   className="w-2 my-auto h-2 rounded-full "
-                  style={{ backgroundColor: getStatusColor(item.status) }}
+                  style={{ backgroundColor: getStatusColor(getLatestStatus(item.status)) }}
                 >
                 </div>
                 <h1 className="flex mx-2 ">
-                  {item.status}
+                  {getLatestStatus(item.status)}
                 </h1>
               </td>
             </tr>
