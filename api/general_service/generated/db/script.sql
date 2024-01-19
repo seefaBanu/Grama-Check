@@ -20,6 +20,7 @@ CREATE TABLE `CertificateRequest` (
 	`id` VARCHAR(191) NOT NULL,
 	`nic` VARCHAR(191) NOT NULL,
 	`address` VARCHAR(191) NOT NULL,
+	`checkedAddress` VARCHAR(191),
 	`userEmail` VARCHAR(191) NOT NULL,
 	`userName` VARCHAR(191) NOT NULL,
 	`assignedGramiEmail` VARCHAR(191) NOT NULL,

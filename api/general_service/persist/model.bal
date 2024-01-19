@@ -5,6 +5,7 @@ type CertificateRequest record {|
     readonly string id;
     string nic;
     string address;
+    string? checkedAddress;
     Status status;
     string userEmail;
     string userName;
