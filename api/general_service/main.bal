@@ -87,16 +87,7 @@ InternalServerErrorMessage failed = {
     body: {message: string `Internal Server Error`}
 };
 
-type CertificateRequest record {|
-    readonly string id;
-    string nic;
-    string address;
-    string? checkedAddress;
-    string statusId;
-    string userEmail;
-    string userName;
-    string assignedGramiEmail;
-|};
+
 
 type ReadyDto record {
     string id;
@@ -269,7 +260,7 @@ service /general on new http:Listener(9091) {
     }
 
     resource function put grama/approved/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
-        CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+        db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
 
         if (certificateRequest is persist:NotFoundError) {
             return http:NOT_FOUND;
@@ -294,7 +285,7 @@ service /general on new http:Listener(9091) {
     }
 
     resource function put grama/rejected/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
-        CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+        db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
 
         if (certificateRequest is persist:NotFoundError) {
             return http:NOT_FOUND;
