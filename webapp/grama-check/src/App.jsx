@@ -5,6 +5,7 @@ import { BrowserRouter, Router, Link, Route, Routes } from "react-router-dom";
 import { useAuthContext } from "@asgardeo/auth-react";
 import Login from "./pages/Login";
 import { useEffect } from "react";
+import Layout from "./Layout";
 
 
 function App() {
@@ -23,12 +24,13 @@ function App() {
   return (
     <div className="">
          <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
-            <Route path="/Request" element={<RequestList />} />
-            <Route path="/single-request/:id" element={<SingleRequest />} />
 
-           
+          <Routes>
+            <Route element={<Layout/>} >
+              <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
+              <Route path="/Request" element={<RequestList />} />
+              <Route path="/single-request/:id" element={<SingleRequest />} /> 
+            </Route>
           </Routes>
         </BrowserRouter>  
       
