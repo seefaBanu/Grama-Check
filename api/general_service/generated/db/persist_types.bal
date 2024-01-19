@@ -7,6 +7,7 @@ public type CertificateRequest record {|
     readonly string id;
     string nic;
     string address;
+    string? checkedAddress;
     string statusId;
     string userEmail;
     string userName;
@@ -17,6 +18,7 @@ public type CertificateRequestOptionalized record {|
     string id?;
     string nic?;
     string address?;
+    string? checkedAddress?;
     string statusId?;
     string userEmail?;
     string userName?;
@@ -35,6 +37,7 @@ public type CertificateRequestInsert CertificateRequest;
 public type CertificateRequestUpdate record {|
     string nic?;
     string address?;
+    string? checkedAddress?;
     string statusId?;
     string userEmail?;
     string userName?;

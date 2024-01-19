@@ -2,12 +2,10 @@ import general_service.db;
 
 import ballerina/http;
 import ballerina/io;
+import ballerina/log;
 import ballerina/persist;
 import ballerina/time;
 import ballerina/uuid;
-import ballerina/log;
-
-
 
 type NewCertificateRequest record {|
     string nic;
@@ -20,6 +18,7 @@ type CertificateRequestDTO record {|
     string id;
     string nic;
     string address;
+    string? checkedAddress;
     record {|
         time:Civil submitted;
         time:Civil? address_verified;
@@ -28,14 +27,16 @@ type CertificateRequestDTO record {|
         time:Civil? rejected;
     |} status;
     string userEmail;
+    string userName;
     string assignedGramiEmail;
 |};
 
-configurable string identityEndpoint = "https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/gcidentityservice/identity-b3c/v1.0";
-// configurable string addressEndpoint = ?;
-configurable string consumerKey = "HwjGXKHaVoB1UfvhdEkNIRRlcM8a";
-configurable string consumerSecret = "LD9Uom1Ve1CF5aBdAUjJFgXhgjYa";
-configurable string tokenEndpoint = "https://sts.choreo.dev/oauth2/token";
+configurable string identityEndpoint = ?;
+configurable string addressEndpoint = ?;
+configurable string consumerKey = ?;
+configurable string identityConsumerSecret = ?;
+configurable string addressConsumerSecret = ?;
+configurable string tokenEndpoint = ?;
 
 type Person record {|
     string name;
@@ -59,14 +60,19 @@ type CreatedMessage record {|
     *http:Created;
 |};
 
-InternalServerErrorMessage failed = {
+InternalServerErrorMessage identityFailed = {
     body: {message: string `Error connecting to Identity Service.`}
+};
+
+InternalServerErrorMessage failed = {
+    body: {message: string `Internal Server Error`}
 };
 
 type CertificateRequest record {|
     readonly string id;
     string nic;
     string address;
+    string? checkedAddress;
     string statusId;
     string userEmail;
     string userName;
@@ -78,6 +84,12 @@ type ReadyDto record {
     boolean isReady;
 };
 
+type AddressCheckDto record {
+    string nic;
+    string address;
+    boolean matched;
+};
+
 service /general on new http:Listener(9091) {
     private final db:Client dbClient;
     function init() returns error? {
@@ -85,11 +97,14 @@ service /general on new http:Listener(9091) {
     }
 
     resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError|http:Created|http:NotFound|error {
+
+        //confirm identity with identity service
+
         http:Client identityClient = check new (identityEndpoint,
             auth = {
                 tokenUrl: tokenEndpoint,
                 clientId: consumerKey,
-                clientSecret: consumerSecret,
+                clientSecret: identityConsumerSecret,
                 clientConfig: {
                     secureSocket: {
                         disable: true
@@ -102,29 +117,52 @@ service /general on new http:Listener(9091) {
         });
         if (person is http:Error) {
             if (person.message() == "Not Found") {
-                NotFoundErrorMessage identityFailed = {
+                NotFoundErrorMessage identityNotFound = {
                     body: {message: string `Identity Check Failed.`}
                 };
-                return identityFailed;
+                return identityNotFound;
             }
-            InternalServerErrorMessage identityFailed = {
-                body: {message: string `Error connecting to Identity Service.`}
-            };
             return identityFailed;
         }
-        io:print("person: ", person);
-        //check availability of nic from identity check
+
         //match the address from address check api
-        db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null,rejected: (), completed: ()};
-        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com", userName: person.name};
+
+        http:Client addressClient = check new (addressEndpoint,
+            auth = {
+                tokenUrl: tokenEndpoint,
+                clientId: consumerKey,
+                clientSecret: addressConsumerSecret,
+                clientConfig: {
+                    secureSocket: {
+                        disable: true
+                    }
+                }
+            }
+        );
+        AddressCheckDto|http:Error address = addressClient->/.post({
+            nic: certificateRequest.nic,
+            address: certificateRequest.address
+        });
+
+        db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null, rejected: null, completed: null};
+        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: "haritha@hasathcharu.com", assignedGramiEmail: "seefa@wso2.com", userName: person.name, checkedAddress: null};
+        if address is AddressCheckDto {
+            newCertificateRequest.checkedAddress = address.address;
+            if (address.matched) {
+                status.address_verified = time:utcToCivil(time:utcNow());
+            }
+        }
+
         string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
         if statusResult is persist:Error {
-
+            io:print(statusResult.message());
+            io:print("status not saved");
             return failed;
         }
         string[]|persist:Error result = self.dbClient->/certificaterequests.post([newCertificateRequest]);
         if result is persist:Error {
-
+            io:print(result.message());
+            io:print("request not saved");
             return failed;
         }
         CreatedMessage success = {
@@ -148,62 +186,61 @@ service /general on new http:Listener(9091) {
         return certificateRequest;
     }
 
-    resource function get user/certificate/[string email]() returns http:InternalServerError |CertificateRequestDTO|http:Forbidden   {
-        
+    resource function get user/certificate/[string email]() returns http:InternalServerError|CertificateRequestDTO|http:Forbidden {
+
         // CertificateRequestDTO|persist:Error certificateRequest = self.dbClient->/certificaterequests();
         // string[]|persist:Error statusResult = self.dbClient->/statuses.post([status]);
         // db:StatusOfUser status = {id: uuid:createType4AsString(), completed: null, rejected: null};
         // stream<Request, persist:Error?> certificateRequest = self.dbClient->/certificaterequests;
         stream<CertificateRequestDTO, persist:Error?> certificateRequestsStream = self.dbClient->/certificaterequests;
-        CertificateRequestDTO[]|persist:Error certificates =  from CertificateRequestDTO certificate in certificateRequestsStream where certificate.userEmail==email && certificate.status.completed == null select certificate;        
-        if certificates is persist:Error{
+        CertificateRequestDTO[]|persist:Error certificates = from CertificateRequestDTO certificate in certificateRequestsStream
+            where certificate.userEmail == email && certificate.status.completed == null
+            select certificate;
+        if certificates is persist:Error {
             return http:INTERNAL_SERVER_ERROR;
         }
         return certificates[0];
         // }  else if certificateRequest.status.completed==null && certificateRequest.status.rejected ==null{
         //     return certificateRequest;
         // }
-        
-       
+
     }
 
-    resource function put userApproved/certificate/[string id]() returns http:InternalServerError |http:NotFound |http:Ok |error {
-    CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+    resource function put userApproved/certificate/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+        CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
 
-    if (certificateRequest is persist:NotFoundError) {
-        return http:NOT_FOUND;
-    } else if (certificateRequest is persist:Error) {
-        return http:INTERNAL_SERVER_ERROR;
-    } else if (certificateRequest is db:CertificateRequest) {
-        string statusId = certificateRequest.statusId;
-        
-        db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
-        
-            approved: time:utcToCivil(time:utcNow())
-            
-
-        });
-
-        if (result is persist:Error) {
+        if (certificateRequest is persist:NotFoundError) {
+            return http:NOT_FOUND;
+        } else if (certificateRequest is persist:Error) {
             return http:INTERNAL_SERVER_ERROR;
-        } else {
-            
-            return http:OK;
+        } else if (certificateRequest is db:CertificateRequest) {
+            string statusId = certificateRequest.statusId;
+
+            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+
+                approved: time:utcToCivil(time:utcNow())
+
+            });
+
+            if (result is persist:Error) {
+                return http:INTERNAL_SERVER_ERROR;
+            } else {
+
+                return http:OK;
+            }
         }
     }
-}
 
-
-resource function put grama/ready(ReadyDto readyDto) returns http:InternalServerError|http:NotFound|http:Ok|persist:Error {
-       db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[readyDto.id]();
+    resource function put grama/ready(ReadyDto readyDto) returns http:InternalServerError|http:NotFound|http:Ok|persist:Error {
+        db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[readyDto.id]();
         if certificateRequest is persist:NotFoundError {
             return http:NOT_FOUND;
         }
-        else if(certificateRequest is persist:Error){
-             log:printError("Error retrieving certificate request for ID: " + readyDto.id + ", Error: " + certificateRequest.message());
+        else if (certificateRequest is persist:Error) {
+            log:printError("Error retrieving certificate request for ID: " + readyDto.id + ", Error: " + certificateRequest.message());
             return http:INTERNAL_SERVER_ERROR;
         }
-        else if(certificateRequest is db:CertificateRequest){
+        else if (certificateRequest is db:CertificateRequest) {
             string statusId = certificateRequest.statusId;
             db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
                 completed: readyDto.isReady ? time:utcToCivil(time:utcNow()) : null
