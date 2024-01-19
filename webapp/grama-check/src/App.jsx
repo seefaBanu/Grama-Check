@@ -27,10 +27,10 @@ function App() {
 
           <Routes>
             <Route element={<Layout/>} >
-              <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
               <Route path="/Request" element={<RequestList />} />
               <Route path="/single-request/:id" element={<SingleRequest />} /> 
             </Route>
+            <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
           </Routes>
         </BrowserRouter>  
       
