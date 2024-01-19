@@ -9,10 +9,6 @@ type UserDto record {|
     string address;
 |};
 
-type NotMatch record {|
-    *http:BadRequest;
-|};
-
 type Match record {|
     *http:Ok;
 |};
@@ -35,10 +31,10 @@ service /address\-check on new http:Listener(9090) {
         }
 
         if (string:equalsIgnoreCaseAscii(string:trim(user.address), string:trim(userDto.address))) {
-            Match details = {body: {nic: user.nic, address: user.address}};
+            Match details = {body: {nic: user.nic, address: user.address, matched: true}};
             return details;
         } else {
-            NotMatch details = {body: {nic: user.nic, address: user.address}};
+            Match details = {body: {nic: user.nic, address: user.address, matched: false}};
             return details;
         }
 
