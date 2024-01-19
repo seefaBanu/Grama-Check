@@ -23,7 +23,7 @@ export const THead = () =>(
 );
 
 export const THDetails = ({tableHeading}) =>(
-  <th className='font-medium p-2'>{tableHeading}</th>
+  <h className='font-medium p-2'>{tableHeading}</h>
 );
 
 export const TBRow = () =>(
