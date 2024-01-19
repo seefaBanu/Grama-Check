@@ -1,12 +1,16 @@
 import address_check_service.db;
 
 import ballerina/http;
-import ballerina/persist;
 import ballerina/lang.'string;
+import ballerina/persist;
 
 type UserDto record {|
     readonly string nic;
     string address;
+|};
+
+type Match record {|
+    *http:Ok;
 |};
 
 service /address\-check on new http:Listener(9090) {
@@ -15,11 +19,10 @@ service /address\-check on new http:Listener(9090) {
     public function init() returns error? {
         self.dbClient = check new ();
     }
-    
 
-    resource function post .(UserDto userDto) returns boolean|http:InternalServerError|http:NotFound|error {
+    resource function post .(UserDto userDto) returns http:InternalServerError|http:BadRequest|http:NotFound|http:Ok|UserDto {
 
-        UserDto|persist:Error user = check self.dbClient->/users/[userDto.nic]();
+        UserDto|persist:Error user = self.dbClient->/users/[userDto.nic]();
         if (user is persist:Error) {
             if user is persist:NotFoundError {
                 return http:NOT_FOUND;
@@ -27,15 +30,15 @@ service /address\-check on new http:Listener(9090) {
             return http:INTERNAL_SERVER_ERROR;
         }
 
-    if (string:equalsIgnoreCaseAscii(string:trim(user.address), string:trim(userDto.address))) {
-            return true;
+        if (string:equalsIgnoreCaseAscii(string:trim(user.address), string:trim(userDto.address))) {
+            Match details = {body: {nic: user.nic, address: user.address, matched: true}};
+            return details;
         } else {
-            return false;
+            Match details = {body: {nic: user.nic, address: user.address, matched: false}};
+            return details;
         }
 
         //have to remove white spaces
-
-        
 
     }
 

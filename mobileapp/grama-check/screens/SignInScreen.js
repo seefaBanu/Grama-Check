@@ -1,22 +1,93 @@
-import React from 'react';
-import { StyleSheet, Text, View, ImageBackground, Image, SafeAreaView } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
-import { StatusBar } from "expo-status-bar";
-
 import Theme from '../constants/theme';
+import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+WebBrowser.maybeCompleteAuthSession();
+import {
+  CLIENT_ID,
+  TOKEN_ENDPOINT,
+  redirectUri,
+  AuthContext,
+} from '../context/AuthContext';
 
 export default function ({ navigation, route }) {
+  const discovery = AuthSession.useAutoDiscovery(TOKEN_ENDPOINT);
+  const { saveAuth } = useContext(AuthContext);
+  const [request, result, promptAsync] = AuthSession.useAuthRequest(
+    {
+      redirectUri,
+      clientId: CLIENT_ID,
+      responseType: 'code',
+      scopes: ['openid', 'profile', 'email'],
+    },
+    discovery
+  );
+  const getAccessToken = async function () {
+    if (result?.params?.code) {
+      fetch(TOKEN_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `grant_type=authorization_code&code=${result?.params?.code}&redirect_uri=${redirectUri}&client_id=${CLIENT_ID}&code_verifier=${request?.codeVerifier}`,
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (!data.access_token || !data.id_token)
+            throw new Error('Authentication error');
+          return saveAuth(data.access_token, data.id_token);
+        })
+        .catch((err) => {
+          console.log('error', err);
+        });
+    }
+  };
+  useEffect(() => {
+    (async function setResult() {
+      if (result) {
+        if (result.error) {
+          Alert.alert(
+            'Authentication error',
+            result.params.error_description || 'Something went wrong'
+          );
+          return;
+        }
+        if (result.type === 'success') {
+          getAccessToken();
+        }
+      }
+    })();
+  }, [result]);
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.bottomSheet}><Text>"ddfdf"</Text></View>
-      </SafeAreaView>
+    <SafeAreaView>
+      <View style={styles.screen}>
+        <View style={styles.content}>
+          <View style={styles.descContainer}>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              Please sign in first.
+            </H4>
+            <Button
+              size='big'
+              color='shadedPrimary'
+              title='Sign In'
+              onPress={() => promptAsync()}
+            />
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
+    height: '100%',
+    fontFamily: 'Poppins',
   },
   bgImage: {
     flex: 1,
@@ -28,21 +99,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   descContainer: {
-    alignItems: 'center',
-  },
-  logoFooter: {
-    height: 100,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 20,
-  },
-  imageContainer: {
-    // width: '80%',
-    // height: 70,
-    height: '50%',
-    width: '100%',
-    justifyContent: 'center',
+    width: '90%',
+    // alignItems: 'center',
   },
   logoContainer: {
     width: '80%',
@@ -69,9 +127,9 @@ const styles = StyleSheet.create({
   },
 
   bottomSheet: {
-    height: "100%", //change this after design it
-    backgroundColor: Theme.defaultBackground,
-    width: "100%",
+    height: '100%', //change this after design it
+    backgroundColor: 'read',
+    width: '100%',
     borderTopEndRadius: 50,
     borderTopStartRadius: 50,
     marginTop: 100,
@@ -79,7 +137,6 @@ const styles = StyleSheet.create({
 
   container: {
     paddingTop: 10,
-    backgroundColor: Theme.primary,
+    backgroundColor: 'blue',
   },
-
 });

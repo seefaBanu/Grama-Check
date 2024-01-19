@@ -5,10 +5,14 @@ import ballerina/io;
 import ballerina/persist;
 import ballerina/time;
 import ballerina/uuid;
+import ballerina/log;
+
+
 
 type NewCertificateRequest record {|
     string nic;
     string address;
+    // string userName;
     // string grama_area?;
 |};
 
@@ -27,11 +31,11 @@ type CertificateRequestDTO record {|
     string assignedGramiEmail;
 |};
 
-configurable string identityEndpoint = ?;
+configurable string identityEndpoint = "https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/gcidentityservice/identity-b3c/v1.0";
 // configurable string addressEndpoint = ?;
-configurable string consumerKey = ?;
-configurable string consumerSecret = ?;
-configurable string tokenEndpoint = ?;
+configurable string consumerKey = "HwjGXKHaVoB1UfvhdEkNIRRlcM8a";
+configurable string consumerSecret = "LD9Uom1Ve1CF5aBdAUjJFgXhgjYa";
+configurable string tokenEndpoint = "https://sts.choreo.dev/oauth2/token";
 
 type Person record {|
     string name;
@@ -57,6 +61,21 @@ type CreatedMessage record {|
 
 InternalServerErrorMessage failed = {
     body: {message: string `Error connecting to Identity Service.`}
+};
+
+type CertificateRequest record {|
+    readonly string id;
+    string nic;
+    string address;
+    string statusId;
+    string userEmail;
+    string userName;
+    string assignedGramiEmail;
+|};
+
+type ReadyDto record {
+    string id;
+    boolean isReady;
 };
 
 service /general on new http:Listener(9091) {
@@ -148,5 +167,52 @@ service /general on new http:Listener(9091) {
        
     }
 
+    resource function put userApproved/certificate/[string id]() returns http:InternalServerError |http:NotFound |http:Ok |error {
+    CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
+
+    if (certificateRequest is persist:NotFoundError) {
+        return http:NOT_FOUND;
+    } else if (certificateRequest is persist:Error) {
+        return http:INTERNAL_SERVER_ERROR;
+    } else if (certificateRequest is db:CertificateRequest) {
+        string statusId = certificateRequest.statusId;
+        
+        db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+        
+            approved: time:utcToCivil(time:utcNow())
+            
+
+        });
+
+        if (result is persist:Error) {
+            return http:INTERNAL_SERVER_ERROR;
+        } else {
+            
+            return http:OK;
+        }
+    }
+}
+
+
+resource function put grama/ready(ReadyDto readyDto) returns http:InternalServerError|http:NotFound|http:Ok|persist:Error {
+       db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[readyDto.id]();
+        if certificateRequest is persist:NotFoundError {
+            return http:NOT_FOUND;
+        }
+        else if(certificateRequest is persist:Error){
+             log:printError("Error retrieving certificate request for ID: " + readyDto.id + ", Error: " + certificateRequest.message());
+            return http:INTERNAL_SERVER_ERROR;
+        }
+        else if(certificateRequest is db:CertificateRequest){
+            string statusId = certificateRequest.statusId;
+            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+                completed: readyDto.isReady ? time:utcToCivil(time:utcNow()) : null
+            });
+            if (result is persist:Error) {
+                return http:INTERNAL_SERVER_ERROR;
+            }
+        }
+        return http:OK;
+    }
 
 }

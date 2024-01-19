@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { H3, Pr, H7, H6, H4, P } from '../components/Texts';
 import Header from '../components/Header';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Theme from '../constants/theme';
 import Status from '../components/Status';
 import { Button } from '../components/Buttons';

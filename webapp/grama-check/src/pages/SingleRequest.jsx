@@ -12,6 +12,7 @@ export default function SingleRequest() {
   const { id } = useParams();
   const [nic,setNic]=useState("");
   const [addressVerified,setAddressVerified] = useState("pending");
+  const [policeCheck,setPoliceCheck] = useState("pending");
   const [submitted,setSubmitted] = useState("pending");
   const [approved,setApproved] = useState("pending");
   const [isReady,setIsReady]=useState("pending")
@@ -41,6 +42,21 @@ export default function SingleRequest() {
     })
   },[])
 
+  const handleApprove = (id) =>{
+    axios.put(`url/userApproved/certificate/${id}`).then((res)=>{
+      console.log(res.data)
+      setAddressVerified("done")
+      setPoliceCheck("done")
+      setApproved("done")
+    })
+  }
+
+  const handleReady = (id) =>{
+    axios.put(`url/grama/ready/${id}`).then((res)=>{
+      console.log(res.data)
+      setIsReady("done")
+    })
+  }
   
   return (
     <div className='flex flex-col'>
@@ -56,6 +72,7 @@ export default function SingleRequest() {
         <div className="content mb-6 flex flex-col gap-4 ">
           <StatusIcon text='Submitted' status={submitted}  />
           <StatusIcon text='Address Verified' status={addressVerified}  />
+          <StatusIcon text='Police Check' status={addressVerified}  />
           <StatusIcon text='Approved' status={approved}  />
           <StatusIcon text='Ready' status={isReady}  />
         </div>
@@ -82,7 +99,7 @@ export default function SingleRequest() {
         }
         </div>
       </div>
-      <div className="actions flex justify-center mt-12">
+      {approved!="done" && <div className="actions flex justify-center mt-12">
         <PopupModal trigger={<Button title='Approve' />}>
           <>
             <p className='text-lg '>Do you want to confirm approval?</p>
@@ -102,8 +119,15 @@ export default function SingleRequest() {
             </div>
           </>
         </PopupModal>
-      </div>
+      </div>}
       </>
+      }
+
+      {
+        approved==="done" && !isReady &&
+        <div className="actions flex justify-center mt-12">
+          <Button title='Ready'/>
+        </div>  
       }
       
     </div>
