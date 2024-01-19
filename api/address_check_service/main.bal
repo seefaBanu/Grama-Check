@@ -16,9 +16,9 @@ service /address\-check on new http:Listener(9090) {
         self.dbClient = check new ();
     }
 
-    resource function post .(UserDto userDto) returns http:InternalServerError|http:BadRequest|http:NotFound|http:Ok & readonly|error {
+    resource function post .(UserDto userDto) returns http:InternalServerError|http:BadRequest|http:NotFound|http:Ok {
 
-        UserDto|persist:Error user = check self.dbClient->/users/[userDto.nic]();
+        UserDto|persist:Error user = self.dbClient->/users/[userDto.nic]();
         if (user is persist:Error) {
             if user is persist:NotFoundError {
                 return http:NOT_FOUND;
