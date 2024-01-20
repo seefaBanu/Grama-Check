@@ -40,10 +40,12 @@ type CertificatePolicedCheckedRequestDTO record {|
 configurable string identityEndpoint = ?;
 configurable string addressEndpoint = ?;
 configurable string policeEndpoint = ?;
+configurable string messageEndpoint = ?;
 configurable string consumerKey = ?;
 configurable string identityConsumerSecret = ?;
 configurable string addressConsumerSecret = ?;
 configurable string policeConsumerSecret = ?;
+configurable string messageConsumerSecret = ?;
 configurable string tokenEndpoint = ?;
 
 type Person record {|
@@ -99,6 +101,26 @@ type AddressCheckDto record {
     string address;
     boolean matched;
 };
+
+http:Client messageClient = check new (messageEndpoint,
+            auth = {
+                tokenUrl: tokenEndpoint,
+                clientId: consumerKey,
+                clientSecret: messageConsumerSecret,
+                clientConfig: {
+                    secureSocket: {
+                        disable: true
+                    }
+                }
+            });
+
+public function sendMessage(string receiver,string message) {
+     http:Response|http:ClientError response = messageClient->/.post({
+            receiver:receiver,
+            message:message
+        });
+    
+}
 
 
 
@@ -268,23 +290,27 @@ service /general on new http:Listener(9091) {
             return http:INTERNAL_SERVER_ERROR;
         } else if (certificateRequest is db:CertificateRequest) {
             string statusId = certificateRequest.statusId;
-
-            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
-
-                approved: time:utcToCivil(time:utcNow())
-
-            });
-
-            if (result is persist:Error) {
-                return http:INTERNAL_SERVER_ERROR;
-            } else {
-
-                return http:OK;
+             db:Status|persist:Error status = self.dbClient->/statuses/[statusId]();
+            if(status is db:Status){
+                if(status.approved==null && status.completed==null && status.rejected==null){
+                    db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+                    approved: time:utcToCivil(time:utcNow())
+                });
+                if (result is persist:Error) {
+                    return http:INTERNAL_SERVER_ERROR;
+                } else {
+                    string message="The certificate requested by" + certificateRequest.userName + "-" + certificateRequest.nic + "has been approved. You will be informed once the certificate is ready for collection";
+                    sendMessage("+94714607445",message);
+                    return http:OK;
+                }
+                }
             }
+                return http:INTERNAL_SERVER_ERROR;
+            
         }
     }
 
-    resource function put grama/rejected/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+    resource function put grama/rejected/[string id](string rejectionReason) returns http:InternalServerError|http:NotFound|http:Ok|error {
         db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
 
         if (certificateRequest is persist:NotFoundError) {
@@ -293,23 +319,28 @@ service /general on new http:Listener(9091) {
             return http:INTERNAL_SERVER_ERROR;
         } else if (certificateRequest is db:CertificateRequest) {
             string statusId = certificateRequest.statusId;
-
-            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
-
+             db:Status|persist:Error status = self.dbClient->/statuses/[statusId]();
+            if(status is db:Status){
+                if(status.approved==null && status.completed==null && status.rejected==null){
+                      db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
                 rejected: time:utcToCivil(time:utcNow())
-
             });
 
             if (result is persist:Error) {
                 return http:INTERNAL_SERVER_ERROR;
             } else {
-
+                string message="The certificate requested by" + certificateRequest.userName + "-" + certificateRequest.nic + "has been rejected due to" + rejectionReason;
+                sendMessage("+94714607445",message);
                 return http:OK;
             }
+                }
+            }
+            return http:INTERNAL_SERVER_ERROR;
+          
         }
     }
 
-    resource function put grama/ready/[string id]() returns http:InternalServerError|http:NotFound|http:Ok|error {
+    resource function put grama/ready/[string id]() returns http:InternalServerError|http:BadRequest|http:NotFound|http:Ok|error {
         db:CertificateRequest|persist:Error certificateRequest = self.dbClient->/certificaterequests/[id]();
         if certificateRequest is persist:NotFoundError {
             return http:NOT_FOUND;
@@ -320,14 +351,28 @@ service /general on new http:Listener(9091) {
         }
         else if (certificateRequest is db:CertificateRequest) {
             string statusId = certificateRequest.statusId;
-            db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
-                completed: time:utcToCivil(time:utcNow())
-            });
-            if (result is persist:Error) {
-                return http:INTERNAL_SERVER_ERROR;
+            db:Status|persist:Error status = self.dbClient->/statuses/[statusId]();
+            if(status is db:Status){
+                if(status.approved!=null && status.rejected==null && status.completed==null){
+                    db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
+                        completed: time:utcToCivil(time:utcNow())
+                    });
+                    string message="The certificate requested by" + certificateRequest.userName + "-" + certificateRequest.nic + "is ready for collection";
+                    sendMessage("+94714607445",message);
+                    if (result is persist:Error) {
+                        return http:INTERNAL_SERVER_ERROR;
+                    }
+                    return http:OK;
+
+                }
+                else{
+                    return http:BAD_REQUEST;
+                }
             }
+           
         }
-        return http:OK;
+       
+       return http:INTERNAL_SERVER_ERROR;
     }
 
     resource function get gramadivisions() returns db:GramaDivisionOptionalized[]|http:InternalServerError|error {
