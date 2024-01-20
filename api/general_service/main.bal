@@ -87,8 +87,6 @@ InternalServerErrorMessage failed = {
     body: {message: string `Internal Server Error`}
 };
 
-
-
 type ReadyDto record {
     string id;
     boolean isReady;
@@ -100,15 +98,13 @@ type AddressCheckDto record {
     boolean matched;
 };
 
-
-
 service /general on new http:Listener(9091) {
     private final db:Client dbClient;
     function init() returns error? {
         self.dbClient = check new ();
     }
 
-    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError|http:Created|http:NotFound|http:Forbidden|error {
+    resource function post user/certificate(NewCertificateRequest certificateRequest) returns http:InternalServerError|http:Created|http:NotFound|http:BadRequest|error {
         string email = "haritha@hasathcharu.com";
         stream<CertificateRequestDTO, persist:Error?> certificateRequestsStream = self.dbClient->/certificaterequests;
         CertificateRequestDTO[]|persist:Error certificates = from CertificateRequestDTO certificate in certificateRequestsStream
@@ -117,8 +113,8 @@ service /general on new http:Listener(9091) {
         if certificates is persist:Error {
             return http:INTERNAL_SERVER_ERROR;
         }
-        if(certificates.length() != 0){
-            return http:FORBIDDEN;
+        if (certificates.length() != 0) {
+            return http:BAD_REQUEST;
         }
         //confirm identity with identity service
 
@@ -167,7 +163,7 @@ service /general on new http:Listener(9091) {
         });
 
         db:StatusInsert status = {id: uuid:createType4AsString(), submitted: time:utcToCivil(time:utcNow()), address_verified: null, approved: null, rejected: null, completed: null};
-        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail:email, assignedGramiEmail:certificateRequest.gramaEmail, userName: person.name, checkedAddress: null};
+        db:CertificateRequestInsert newCertificateRequest = {id: uuid:createType4AsString(), nic: certificateRequest.nic, address: certificateRequest.address, statusId: status.id, userEmail: email, assignedGramiEmail: certificateRequest.gramaEmail, userName: person.name, checkedAddress: null};
         if address is AddressCheckDto {
             newCertificateRequest.checkedAddress = address.address;
             if (address.matched) {
@@ -249,7 +245,7 @@ service /general on new http:Listener(9091) {
         if certificates is persist:Error {
             return http:INTERNAL_SERVER_ERROR;
         }
-        if(certificates.length() == 0){
+        if (certificates.length() == 0) {
             return http:NOT_FOUND;
         }
         return certificates[0];
@@ -331,13 +327,9 @@ service /general on new http:Listener(9091) {
     }
 
     resource function get gramadivisions() returns db:GramaDivisionOptionalized[]|http:InternalServerError|error {
-           stream<db:GramaDivisionOptionalized, persist:Error?> gramaDivisions = self.dbClient->/gramadivisions;
+        stream<db:GramaDivisionOptionalized, persist:Error?> gramaDivisions = self.dbClient->/gramadivisions;
         return from db:GramaDivisionOptionalized division in gramaDivisions
             select division;
     }
-
-            
-
-           
 
 }
