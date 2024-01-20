@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Image, ScrollView, Text,SafeAreaView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  ScrollView,
+  Text,
+  SafeAreaView,
+} from 'react-native';
 import Theme from '../constants/theme';
 import { Button } from '../components/Buttons';
 import { TextInputBox, SelectList } from '../components/Inputs';
@@ -16,6 +23,7 @@ export default function ({ navigation, route }) {
   const [saving, setSaving] = React.useState(false);
   const [userData, setUserData] = React.useState({});
   const [division, setDivision] = React.useState('');
+
   const PersonSchema = Yup.object().shape({
     nic: Yup.string()
       .matches(/^([0-9]{9}[x|X|v|V]|[0-9]{12})$/, 'Invalid NIC format')
