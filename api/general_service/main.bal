@@ -2,6 +2,7 @@ import general_service.db;
 
 import ballerina/http;
 import ballerina/io;
+import ballerina/jwt;
 import ballerina/log;
 import ballerina/persist;
 import ballerina/time;
@@ -331,8 +332,12 @@ service /general on new http:Listener(9091) {
         return from db:GramaDivisionOptionalized division in gramaDivisions
             select division;
     }
-    resource function get testjwt(@http:Header string x\-jwt\-assertion) returns string|error {
-        return x\-jwt\-assertion;
+    resource function get testjwt(@http:Header string x\-jwt\-assertion) returns jwt:Payload|error {
+        [jwt:Header, jwt:Payload]|jwt:Error result = check jwt:decode(x\-jwt\-assertion);
+        if (result is [jwt:Header, jwt:Payload]) {
+            return result[1];
+        }
+        return error("Invalid JWT");
 
     }
 
