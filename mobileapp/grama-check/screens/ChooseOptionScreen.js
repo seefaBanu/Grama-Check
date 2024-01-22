@@ -11,14 +11,11 @@ export default function ({ navigation, route }) {
   const [data, setData] = React.useState(false);
   const getData = useCallback(async () => {
     try {
-      const response = await fetch(
-        `${env.backend}/user/certificate/${user.user.email}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-          },
-        }
-      );
+      const response = await fetch(`${env.backend}/user/certificate`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
       if (response.status == 401 || response.status == 403) {
         logout();
       }

@@ -18,8 +18,13 @@ export default function ({ navigation, route }) {
             <H2 style={{ ...styles.text, marginTop: 15 }}>
               {user.user.firstName} {user.user.lastName}
             </H2>
-            <H4 style={{ ...styles.text, ...styles.description }}>
+            <H4
+              style={{ ...styles.text, ...styles.description, marginBottom: 0 }}
+            >
               {user.user.email}
+            </H4>
+            <H4 style={{ ...styles.text, ...styles.description }}>
+              {user.user.nic}
             </H4>
             <Button
               size='big'

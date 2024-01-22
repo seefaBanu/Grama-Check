@@ -15,17 +15,16 @@ import Header from '../components/Header';
 import LoadingModal from '../components/LoadingModal';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import districtData from '../assets/districts.json';
 import env from '../constants/env';
 import RefreshView from '../components/RefreshView';
 import { AuthContext } from '../context/AuthContext';
 
 export default function ({ navigation, route }) {
   const [saving, setSaving] = React.useState(false);
-  const [userData, setUserData] = React.useState({});
   const [division, setDivision] = React.useState('');
   const [gramaData, setGramaData] = React.useState([]);
   const { user, logout } = useContext(AuthContext);
+  console.log(user.user);
   const getData = useCallback(async () => {
     try {
       const response = await fetch(`${env.backend}/gramadivisions`, {
@@ -54,7 +53,7 @@ export default function ({ navigation, route }) {
   });
   const formik = useFormik({
     initialValues: {
-      nic: '',
+      nic: user.user.nic,
       address: '',
     },
     validationSchema: PersonSchema,
@@ -69,7 +68,6 @@ export default function ({ navigation, route }) {
     for (let error in formik.errors) if (error) return;
     if (!division) return alert('Please select a Grama Niladari Division');
     const data = formik.values;
-    setUserData(data);
     setSaving(true);
     let response;
     try {
@@ -165,6 +163,7 @@ export default function ({ navigation, route }) {
                   value={formik.values.nic}
                   error={formik.errors.nic}
                   touched={formik.touched.nic}
+                  disabled={true}
                 />
                 <TextInputBox
                   inputlabel='Address'
