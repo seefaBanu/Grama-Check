@@ -24,7 +24,6 @@ export default function ({ navigation, route }) {
   const [division, setDivision] = React.useState('');
   const [gramaData, setGramaData] = React.useState([]);
   const { user, logout } = useContext(AuthContext);
-  console.log(user.user);
   const getData = useCallback(async () => {
     try {
       const response = await fetch(`${env.backend}/gramadivisions`, {
@@ -136,7 +135,6 @@ export default function ({ navigation, route }) {
       });
     }
   }
-  console.log(division);
   return (
     <SafeAreaView>
       <View style={styles.screen}>
