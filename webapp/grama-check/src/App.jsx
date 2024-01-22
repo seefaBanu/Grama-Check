@@ -26,12 +26,14 @@ function App() {
          <BrowserRouter>
 
           <Routes>
+
             <Route element={<Layout/>} >
               <Route path="/Request" element={<RequestList />} />
               <Route path="/single-request/:id" element={<SingleRequest />} /> 
             </Route>
-            <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
-          </Routes>
+       
+              <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
+              </Routes>
         </BrowserRouter>  
       
       
