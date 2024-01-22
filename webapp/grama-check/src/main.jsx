@@ -5,7 +5,7 @@ import './index.css'
 import { AuthProvider } from '@asgardeo/auth-react'
 
 const config = {
-  signInRedirectURL: "localhost:5173",
+  signInRedirectURL: "http://localhost:5173/",
   // signOutRedirectURL: "http://localhost:5173",
   clientID: "OoXOfHIW8C8fcft8ouqJtVCgaVwa",
   baseUrl: "https://api.asgardeo.io/t/interns",

@@ -7,6 +7,8 @@ import Spinner from '../components/Spinner';
 import StatusIcon from '../components/StatusIcon';
 import PopupModal from '../components/PopupModal';
 
+import { useAuthContext } from '@asgardeo/auth-react';
+
 
 export default function SingleRequest() {
   const { id } = useParams();
@@ -17,6 +19,7 @@ export default function SingleRequest() {
   const [approved,setApproved] = useState("pending");
   const [isReady,setIsReady]=useState("pending")
   const [isLoading, setIsLoading] = useState(false);
+  const { state, signOut, getAccessToken } = useAuthContext();
 
   const policeCase=[
     {case:"road rage",date:"2023-12-02"},
@@ -25,7 +28,18 @@ export default function SingleRequest() {
 
   useEffect(()=>{
     setIsLoading(true);
-    axios.get(`https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/generalservice/general-80d/v1.0/grama/certificate/${id}`)
+    getAccessToken().then((token) => {
+      return axios.get(
+        `https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-prod.e1-us-east-azure.choreoapis.dev/eyfq/gcgeneralservice/general-80d/v1.0/grama/certificate/${id}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+            
+          },
+        }
+      )
+      })
     .then((res)=>{
       console.log(res.data)
       setNic(res.data.nic);
@@ -99,7 +113,7 @@ export default function SingleRequest() {
         }
         </div>
       </div>
-      {approved!="done" && <div className="actions flex justify-center mt-12">
+      {approved!="done" && <div className="actions flex justify-center mt-8">
         <PopupModal trigger={<Button title='Approve' />}>
           <>
             <p className='text-lg '>Do you want to confirm approval?</p>
@@ -124,8 +138,8 @@ export default function SingleRequest() {
       }
 
       {
-        approved==="done" && !isReady &&
-        <div className="actions flex justify-center mt-12">
+        approved==="done" && isReady==="pending" &&
+        <div className="actions flex justify-center mt-8">
           <Button title='Ready'/>
         </div>  
       }
