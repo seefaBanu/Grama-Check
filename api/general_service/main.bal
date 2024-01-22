@@ -331,8 +331,8 @@ service /general on new http:Listener(9091) {
         return from db:GramaDivisionOptionalized division in gramaDivisions
             select division;
     }
-    resource function get testjwt(@http:Header string xJwtAssertion) returns string|error {
-        return xJwtAssertion;
+    resource function get testjwt(@http:Header string x\-jwt\-assertion) returns string|error {
+        return x\-jwt\-assertion;
 
     }
 
