@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }) => {
           firstName: decodedIdToken.given_name,
           lastName: decodedIdToken.family_name,
           email: decodedIdToken.email,
+          nic: decodedIdToken.nic,
         },
       });
     } catch (err) {
