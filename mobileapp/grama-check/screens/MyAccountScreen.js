@@ -38,7 +38,9 @@ export default function ({ navigation, route }) {
               size='big'
               color='shadedDanger'
               title='Log Out'
-              onPress={() => logout()}
+              onPress={() => {
+                logout();
+              }}
             />
           </View>
         </View>
