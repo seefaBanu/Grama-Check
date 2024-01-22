@@ -27,7 +27,6 @@ export default function Login(props) {
                 onClick={() => signIn()}>Sign-in</button>
             </div>
             </div>
-            
         </div>
       )
       }

@@ -5,54 +5,57 @@ import SingleRequest from '../components/SingleRequest';
 import NavBar from '../components/NavBar';
 import {Tab, THDetails, Table,THead,TBRow } from '../components/Elements';
 import axios from 'axios';
+import { useAuthContext } from '@asgardeo/auth-react';
 
 function RequestList({token}) {
   const [selectedTab, setSelectedTab] = useState('All Requests');
+  const { state, signIn, signOut } = useAuthContext();
+  console.log(state);
   const [searchKeyword, setSearchKeyword] = useState('');
   const naivgate = useNavigate();
   const [requestList, setRequestList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [at,setAt] = useState("");  
 
-  const getToken = async () => {
-    const orgName = 'interns';
-    const clientID = '728m0XamjELUemdnAmAy17q7Feca';
-    const clientSecret = 'QWi9TRUzxVof0Jowp82KmDdvlSZpE5il3pTKdlVCpW0a';
-    const scope = 'profile openid';
+  // const getToken = async () => {
+  //   const orgName = 'interns';
+  //    const clientID = 'OoXOfHIW8C8fcft8ouqJtVCgaVwa';
+  //   // const clientID = 'OoXOfHIW8C8fcft8ouqJtVCgaVwa';
+  //   const scope = 'profile openid email';
   
-    const tokenEndpoint = `https://api.asgardeo.io/t/${orgName}/oauth2/token`;
+  //   const tokenEndpoint = `https://api.asgardeo.io/t/${orgName}/oauth2/token`;
   
-    const headers = new Headers({
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
-    });
+  //   const headers = new Headers({
+  //     'Content-Type': 'application/x-www-form-urlencoded',
+  //     'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
+  //   });
   
-    const body = new URLSearchParams({
-      'grant_type': 'client_credentials',
-      'scope': scope,
-    });
+  //   const body = new URLSearchParams({
+  //     'grant_type': 'code',
+  //     'scope': scope,
+  //   });
   
-    try {
-      const response = await fetch(tokenEndpoint, {
-        method: 'POST',
-        headers: headers,
-        body: body,
-      });
+  //   try {
+  //     const response = await fetch(tokenEndpoint, {
+  //       method: 'POST',
+  //       headers: headers,
+  //       body: body,
+  //     });
   
-      if (!response.ok) {
-        throw new Error(`Failed to retrieve access token: ${response.statusText}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`Failed to retrieve access token: ${response.statusText}`);
+  //     }
   
-      const data = await response.json();
-      const accessToken = data.access_token;
+  //     const data = await response.json();
+  //     const accessToken = data.access_token;
   
-      console.log('Access Token:', accessToken);
-      setAt(accessToken);
-      return accessToken;
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  };
+  //     console.log('Access Token:', accessToken);
+  //     setAt(accessToken);
+  //     return accessToken;
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //   }
+  // };
   
   
 
@@ -66,7 +69,7 @@ function RequestList({token}) {
     // .then((res)=>{
     //   setRequestList(res.data)
     // })
-
+    console.log("getting token")
     getToken();
     setIsLoading(false);
   }, []);
@@ -76,7 +79,7 @@ function RequestList({token}) {
       
       if(at !== ""){
       axios.get(
-        'https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-dev.e1-us-east-azure.choreoapis.dev/eyfq/generalservice/general-80d/v1.0/grama/certificate',
+        'https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-prod.e1-us-east-azure.choreoapis.dev/eyfq/gcgeneralservice/general-80d/v1.0',
         {
           headers: {
             Accept: 'application/scim+json',
