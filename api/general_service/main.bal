@@ -316,15 +316,14 @@ service /general on new http:Listener(9091) {
             return http:NOT_FOUND;
         } else if (certificateRequest is persist:Error) {
             return http:INTERNAL_SERVER_ERROR;
-        } else if (certificateRequest is db:CertificateRequest) {
+        } else  {
             string statusId = certificateRequest.statusId;
              db:Status|persist:Error status = self.dbClient->/statuses/[statusId]();
-            if(status is db:Status){
-                if(status.approved==null && status.completed==null && status.rejected==null){
+            if(status is db:Status && status.approved==null && status.completed==null && status.rejected==null){
                     db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
                     approved: time:utcToCivil(time:utcNow()),
                     address_verified: status.address_verified!=null ? status.address_verified : time:utcToCivil(time:utcNow())
-                });
+                    });
                 if (result is persist:Error) {
                     return http:INTERNAL_SERVER_ERROR;
                 } else {
@@ -332,7 +331,7 @@ service /general on new http:Listener(9091) {
                     http:Response|http:ClientError messageResponse=sendMessage("+94714607445",message);
                     return http:OK;
                 }
-                }
+                 
             }
                 return http:BAD_REQUEST;
         }
