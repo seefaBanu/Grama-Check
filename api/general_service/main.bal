@@ -347,7 +347,7 @@ service /general on new http:Listener(9091) {
             return http:UNAUTHORIZED;
         }
         string email = <string>result[1]["email"];
-        if (!(email == "")) {
+        if ((email == "")) {
             NoUserContextErrorMessage noUserContextErrorMessage = {
                 body: {message: string `No user context found.`}
             };
