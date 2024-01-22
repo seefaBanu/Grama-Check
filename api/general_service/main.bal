@@ -326,7 +326,8 @@ service /general on new http:Listener(9091) {
         return http:OK;
     }
 
-    resource function get gramadivisions() returns db:GramaDivisionOptionalized[]|http:InternalServerError|error {
+    resource function get gramadivisions(@http:Header string x\-jwt\-assertion) returns db:GramaDivisionOptionalized[]|http:InternalServerError|error {
+        io:print(x\-jwt\-assertion);
         stream<db:GramaDivisionOptionalized, persist:Error?> gramaDivisions = self.dbClient->/gramadivisions;
         return from db:GramaDivisionOptionalized division in gramaDivisions
             select division;
