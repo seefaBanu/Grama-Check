@@ -68,6 +68,10 @@ type NotFoundErrorMessage record {|
 
 |};
 
+type NoUserContextErrorMessage record {|
+    *http:Unauthorized;
+|};
+
 type InternalServerErrorMessage record {|
     *http:InternalServerError;
 |};
@@ -97,6 +101,11 @@ type AddressCheckDto record {
     string nic;
     string address;
     boolean matched;
+};
+
+type UserJwtPayload record {
+    *jwt:Payload;
+    string? email;
 };
 
 service /general on new http:Listener(9091) {
@@ -332,12 +341,20 @@ service /general on new http:Listener(9091) {
         return from db:GramaDivisionOptionalized division in gramaDivisions
             select division;
     }
-    resource function get testjwt(@http:Header string x\-jwt\-assertion) returns jwt:Payload|error {
+    resource function get testjwt(@http:Header string x\-jwt\-assertion) returns string|error|http:Unauthorized {
         [jwt:Header, jwt:Payload]|jwt:Error result = check jwt:decode(x\-jwt\-assertion);
-        if (result is [jwt:Header, jwt:Payload]) {
-            return result[1];
+        if (result is jwt:Error) {
+            return http:UNAUTHORIZED;
         }
-        return error("Invalid JWT");
+        string email = <string>result[1]["email"];
+        if (!(email == "")) {
+            NoUserContextErrorMessage noUserContextErrorMessage = {
+                body: {message: string `No user context found.`}
+            };
+            return noUserContextErrorMessage;
+        }
+
+        return email;
 
     }
 
