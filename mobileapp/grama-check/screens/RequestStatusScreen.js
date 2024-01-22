@@ -37,6 +37,7 @@ export default function ({ navigation, route }) {
       throw error;
     }
   }, []);
+  console.log(data);
   return (
     <SafeAreaView>
       <View style={styles.screen}>
@@ -53,10 +54,10 @@ export default function ({ navigation, route }) {
             </H6>
             <Status
               status={{
-                submitted: data.status?.submitted ? true : false,
-                addressVerified: data.status?.addressVerified ? true : false,
-                approved: data.status?.approved ? true : false,
-                ready: data.status?.ready ? true : false,
+                submitted: data?.status?.submitted ? true : false,
+                addressVerified: data?.status?.address_verified ? true : false,
+                approved: data?.status?.approved ? true : false,
+                ready: data?.status?.ready ? true : false,
               }}
             />
           </View>

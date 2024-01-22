@@ -1,12 +1,3 @@
-import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Image,
-  ScrollView,
-  Text,
-  SafeAreaView,
-} from 'react-native';
 import React, { useCallback, useContext } from 'react';
 import {
   StyleSheet,
@@ -90,16 +81,13 @@ export default function ({ navigation, route }) {
           nic: data.nic,
           address: data.address,
           gramaEmail: gramaData.find((item) => item.id == division).gramiEmail,
-          // division: division,
         }),
       });
-      console.log(res);
-      console.log(res.text());
-      // if (res.status == 401 || res.status == 403) {
-      //   logout();
-      //   return;
-      // }
-      response = await res.json();
+      if (res.status == 401 || res.status == 403) {
+        logout();
+        return;
+      }
+
       setSaving(false);
 
       formik.resetForm();
