@@ -36,7 +36,7 @@ export default function () {
           },
         ]}
       >
-        {/* <Image source={require('../assets/loading.png')} style={styles.icon} /> */}
+        <Image source={require('../assets/icon.png')} style={styles.icon} />
       </Animated.View>
     </View>
   );
@@ -50,16 +50,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
   },
   loadingBox: {
-    height: 120,
-    width: 120,
+    height: 100,
+    width: 100,
     backgroundColor: theme.overlay,
-    borderRadius: 30,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   icon: {
-    height: 80,
-    width: 80,
+    height: 60,
+    width: 60,
     resizeMode: 'contain',
   },
 });

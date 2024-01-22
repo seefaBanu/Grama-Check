@@ -5,6 +5,7 @@ type CertificateRequest record {|
     readonly string id;
     string nic;
     string address;
+    string? checkedAddress;
     Status status;
     string userEmail;
     string userName;
@@ -19,5 +20,14 @@ type Status record {|
     time:Civil? completed;
     time:Civil? rejected;
     CertificateRequest? certificaterequest;
+|};
+
+type GramaDivision record {|
+    readonly string id;
+    string gnDivision;
+    string province;
+    string district;
+    string divisionalSecretariat;
+    string gramiEmail;
 |};
 
