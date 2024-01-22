@@ -302,7 +302,7 @@ service /general on new http:Listener(9091) {
                 if (result is persist:Error) {
                     return http:INTERNAL_SERVER_ERROR;
                 } else {
-                    string message="The certificate requested by" + certificateRequest.userName + "-" + certificateRequest.nic + "has been approved. You will be informed once the certificate is ready for collection";
+                    string message="The certificate requested by " + certificateRequest.userName + " - " + certificateRequest.nic + " has been approved. You will be informed once the certificate is ready for collection";
                     http:Response|http:ClientError messageResponse=sendMessage("+94714607445",message);
                     return http:OK;
                 }
@@ -331,7 +331,7 @@ service /general on new http:Listener(9091) {
             if (result is persist:Error) {
                 return http:INTERNAL_SERVER_ERROR;
             } else {
-                string message="The certificate requested by" + certificateRequest.userName + "-" + certificateRequest.nic + "has been rejected due to" + rejectionReason;
+                string message="The certificate requested by " + certificateRequest.userName + "-" + certificateRequest.nic + " has been rejected due to " + rejectionReason;
                 http:Response|http:ClientError messageResponse=sendMessage("+94714607445",message);
                 return http:OK;
             }
@@ -359,7 +359,7 @@ service /general on new http:Listener(9091) {
                     db:Status|persist:Error result = check self.dbClient->/statuses/[statusId].put({
                         completed: time:utcToCivil(time:utcNow())
                     });
-                    string message="The certificate requested by" + certificateRequest.userName + "-" + certificateRequest.nic + "is ready for collection";
+                    string message="The certificate requested by " + certificateRequest.userName + " - " + certificateRequest.nic + " is ready for collection";
                     http:Response|http:ClientError messageResponse=sendMessage("+94714607445",message);
                     if (result is persist:Error) {
                         return http:INTERNAL_SERVER_ERROR;
