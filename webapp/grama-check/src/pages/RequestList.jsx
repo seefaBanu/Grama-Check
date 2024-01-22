@@ -128,8 +128,7 @@ function RequestList() {
 
   return (
     <>
-    <NavBar/>
-    <div className='font-heading m-4 '>
+    <div className='font-heading m-4'>
       <div className='flex mb-10'>
         <h1 className='font-medium text-2xl p-2 w-full radius text-slate-600'>Requests</h1>
         <div className='mt-3'> <SearchBar onChange={handleSearch} /></div>

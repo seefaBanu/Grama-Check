@@ -1,3 +1,12 @@
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Image,
+  ScrollView,
+  Text,
+  SafeAreaView,
+} from 'react-native';
 import React, { useCallback, useContext } from 'react';
 import {
   StyleSheet,
