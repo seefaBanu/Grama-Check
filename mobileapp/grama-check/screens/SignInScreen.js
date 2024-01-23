@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
@@ -68,12 +68,7 @@ export default function ({ navigation, route }) {
       <View style={styles.screen}>
         <View style={styles.content}>
           <View style={styles.descContainer}>
-            <View style={styles.gLogoContainer}>
-              <Image
-                source={require('../assets/logo.png')}
-                style={styles.logo}
-              />
-            </View>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
             <H4 style={{ ...styles.text, ...styles.description }}>
               Please sign in first.
             </H4>
@@ -127,15 +122,10 @@ const styles = StyleSheet.create({
   },
   logo: {
     resizeMode: 'contain',
-    width: 250,
+    width: '40%',
     height: '100%',
-    alignSelf: 'center',
   },
-  gLogoContainer: {
-    width: '100%',
-    alignItems: 'center',
-    height: 70,
-  },
+
   bottomSheet: {
     height: '100%', //change this after design it
     backgroundColor: 'read',

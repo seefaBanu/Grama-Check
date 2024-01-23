@@ -16,7 +16,7 @@ export default {
   textColor: '#555555',
   placeholderText: '#A7A7A7',
   contrastTextColor: 'white',
-  overlay: '#ffffff',
+  overlay: '#e0e0e0',
   overlayShade: '#88888840',
   overlayShadeDarker: '#ffffff50',
   yellow: '#EFCB68',

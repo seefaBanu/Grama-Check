@@ -19,7 +19,7 @@ export default function (props) {
       ) : (
         <View style={{ width: 28 }}></View>
       )}
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <H3>GramaCheck</H3>
       {props.home ? (
         <TouchableOpacity onPress={goHome}>
           <Octicons name='home' size={28} color={Theme.textColor} />
@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
   logo: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 32,
-    width: 170,
+    height: 28,
+    width: 100,
     resizeMode: 'contain',
   },
   icon: {

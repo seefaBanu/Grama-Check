@@ -1,43 +1,19 @@
-import React, { useContext } from 'react';
-import { StyleSheet, View, SafeAreaView, Linking } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { H3, Pr, H7, H6, H4, P } from '../components/Texts';
 import Header from '../components/Header';
 import Theme from '../constants/theme';
 import Status from '../components/Status';
 import { Button } from '../components/Buttons';
 import RefreshView from '../components/RefreshView';
-import { useCallback } from 'react';
-import env from '../constants/env';
-import { AuthContext } from '../context/AuthContext';
-export default function ({ navigation, route }) {
-  const { user, logout } = useContext(AuthContext);
-  const [data, setData] = React.useState({});
-  const getData = useCallback(async () => {
-    try {
-      const response = await fetch(`${env.backend}/user/certificate`, {
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`,
-        },
-      });
-      if (response.status == 401 || response.status == 403) {
-        logout();
-      }
-      if (response.status == 404) {
-        return navigation.navigate('ChooseOptionScreen');
-      }
 
-      if (!response.ok) {
-        console.log(response);
-      }
-      const data = await response.json();
-      setData(data);
-      return;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
-    }
+export default function ({ navigation, route }) {
+  const [order, setOrder] = React.useState({});
+  const getData = React.useCallback(async () => {
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    });
   }, []);
-  console.log(data);
   return (
     <SafeAreaView>
       <View style={styles.screen}>
@@ -46,34 +22,28 @@ export default function ({ navigation, route }) {
         <RefreshView getData={getData} route={route}>
           <View style={styles.ordersContainer}>
             <H7 style={styles.orderInfo} selectable={true}>
-              {data.id}
+              sldfja-sdlkfjsd-slkdjfs-sdfsdf
             </H7>
-            <H6 style={styles.orderInfoFarmer}>
-              Submitted on {data.status?.submitted.day}-
-              {data.status?.submitted.month}-{data.status?.submitted.year}
-            </H6>
+            <H6 style={styles.orderInfoFarmer}>Submitted on 1 Jan 2024</H6>
             <Status
               status={{
-                submitted: data?.status?.submitted ? true : false,
-                addressVerified: data?.status?.address_verified ? true : false,
-                approved: data?.status?.approved ? true : false,
-                ready: data?.status?.ready ? true : false,
+                submitted: true,
+                addressVerified: false,
+                approved: true,
+                ready: false,
               }}
+              isDelivery={order?.isDelivery}
+              reviewed={order?.farmerRating != -1}
             />
           </View>
           <View style={styles.buttonArea}>
-            <Button
-              title='Get Support'
-              color='shadedWarning'
-              size='big'
-              onPress={() => {
-                Linking.openURL('tel:1919');
-              }}
-            />
+            <Button title='Get Support' color='shadedWarning' size='big' />
           </View>
-          <P style={styles.infoText}>
-            ⓘ Granting of the request is subject to police clearence.
-          </P>
+          {!order?.orderUpdate?.cancelled && (
+            <P style={styles.infoText}>
+              ⓘ Granting of the request is subject to police clearence.
+            </P>
+          )}
         </RefreshView>
       </View>
     </SafeAreaView>
@@ -117,10 +87,3 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
 });
-
-// const getData = React.useCallback(async () => {
-
-//   return new Promise((resolve, reject) => {
-//     resolve(true);
-//   });
-// }, []);

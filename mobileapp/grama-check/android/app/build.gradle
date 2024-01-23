@@ -81,7 +81,7 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.hasathcharu.gramaconnect'
+    namespace "com.gramacheck"
     defaultConfig {
         applicationId 'com.hasathcharu.gramaconnect'
         minSdkVersion rootProject.ext.minSdkVersion

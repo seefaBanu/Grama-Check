@@ -7,7 +7,6 @@ public type CertificateRequest record {|
     readonly string id;
     string nic;
     string address;
-    string? checkedAddress;
     string statusId;
     string userEmail;
     string userName;
@@ -18,7 +17,6 @@ public type CertificateRequestOptionalized record {|
     string id?;
     string nic?;
     string address?;
-    string? checkedAddress?;
     string statusId?;
     string userEmail?;
     string userName?;
@@ -37,7 +35,6 @@ public type CertificateRequestInsert CertificateRequest;
 public type CertificateRequestUpdate record {|
     string nic?;
     string address?;
-    string? checkedAddress?;
     string statusId?;
     string userEmail?;
     string userName?;
@@ -77,35 +74,5 @@ public type StatusUpdate record {|
     time:Civil? approved?;
     time:Civil? completed?;
     time:Civil? rejected?;
-|};
-
-public type GramaDivision record {|
-    readonly string id;
-    string gnDivision;
-    string province;
-    string district;
-    string divisionalSecretariat;
-    string gramiEmail;
-|};
-
-public type GramaDivisionOptionalized record {|
-    string id?;
-    string gnDivision?;
-    string province?;
-    string district?;
-    string divisionalSecretariat?;
-    string gramiEmail?;
-|};
-
-public type GramaDivisionTargetType typedesc<GramaDivisionOptionalized>;
-
-public type GramaDivisionInsert GramaDivision;
-
-public type GramaDivisionUpdate record {|
-    string gnDivision?;
-    string province?;
-    string district?;
-    string divisionalSecretariat?;
-    string gramiEmail?;
 |};
 
