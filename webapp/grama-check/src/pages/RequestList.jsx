@@ -14,7 +14,8 @@ function RequestList({token}) {
   const naivgate = useNavigate();
   const [requestList, setRequestList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-    useEffect(() => {
+    
+  useEffect(() => {
       getAccessToken().then((token) => {
         return axios.get(
           'https://cf3a4176-54c9-4547-bcd6-c6fe400ad0d8-prod.e1-us-east-azure.choreoapis.dev/eyfq/gcgeneralservice/general-80d/v1.0/grama/certificate',
