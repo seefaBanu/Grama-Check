@@ -6,11 +6,9 @@ import 'core-js/stable/atob';
 import { Linking } from 'react-native';
 
 export const AuthContext = createContext(null);
-export const TOKEN_ENDPOINT =
-  'https://api.asgardeo.io/t/hasathcharu/oauth2/token';
+export const TOKEN_ENDPOINT = 'https://api.asgardeo.io/t/interns/oauth2/token';
 export const redirectUri = AuthSession.makeRedirectUri();
-export const CLIENT_ID = 'QMK8Jwlm0e5WTj7Ij0Jk1lBNSh4a';
-
+export const CLIENT_ID = 'OoXOfHIW8C8fcft8ouqJtVCgaVwa';
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const checkAuth = async function () {
@@ -40,6 +38,7 @@ export const AuthProvider = ({ children }) => {
           firstName: decodedIdToken.given_name,
           lastName: decodedIdToken.family_name,
           email: decodedIdToken.email,
+          nic: decodedIdToken.nic,
         })
       );
       setUser({
@@ -48,6 +47,7 @@ export const AuthProvider = ({ children }) => {
           firstName: decodedIdToken.given_name,
           lastName: decodedIdToken.family_name,
           email: decodedIdToken.email,
+          nic: decodedIdToken.nic,
         },
       });
     } catch (err) {
