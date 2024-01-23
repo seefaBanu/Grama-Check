@@ -1,75 +1,10 @@
-import React, { useContext, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Image,
-  SafeAreaView,
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, ImageBackground, Image, SafeAreaView } from 'react-native';
 import { H2, H1, H4 } from '../components/Texts';
 import { Button } from '../components/Buttons';
 import Theme from '../constants/theme';
-import * as AuthSession from 'expo-auth-session';
-import * as WebBrowser from 'expo-web-browser';
-WebBrowser.maybeCompleteAuthSession();
-import {
-  CLIENT_ID,
-  TOKEN_ENDPOINT,
-  redirectUri,
-  AuthContext,
-} from '../context/AuthContext';
 
 export default function ({ navigation, route }) {
-  const discovery = AuthSession.useAutoDiscovery(TOKEN_ENDPOINT);
-  const { saveAuth } = useContext(AuthContext);
-  const [request, result, promptAsync] = AuthSession.useAuthRequest(
-    {
-      redirectUri,
-      clientId: CLIENT_ID,
-      responseType: 'code',
-      scopes: ['openid', 'profile', 'email'],
-    },
-    discovery
-  );
-  const getAccessToken = async function () {
-    if (result?.params?.code) {
-      fetch(TOKEN_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `grant_type=authorization_code&code=${result?.params?.code}&redirect_uri=${redirectUri}&client_id=${CLIENT_ID}&code_verifier=${request?.codeVerifier}`,
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          if (!data.access_token || !data.id_token)
-            throw new Error('Authentication error');
-          return saveAuth(data.access_token, data.id_token);
-        })
-        .catch((err) => {
-          console.log('error', err);
-        });
-    }
-  };
-  useEffect(() => {
-    (async function setResult() {
-      if (result) {
-        if (result.error) {
-          Alert.alert(
-            'Authentication error',
-            result.params.error_description || 'Something went wrong'
-          );
-          return;
-        }
-        if (result.type === 'success') {
-          getAccessToken();
-        }
-      }
-    })();
-  }, [result]);
   return (
     <SafeAreaView>
       <View style={styles.screen}>
@@ -86,20 +21,15 @@ export default function ({ navigation, route }) {
                 style={styles.mainImage}
               />
             </View>
-            <View style={styles.gLogoContainer}>
-              <Image
-                source={require('../assets/logo.png')}
-                style={styles.logo}
-              />
-            </View>
+            <H2 style={{ ...styles.text, marginTop: 15 }}>GramaCheck</H2>
             <H4 style={{ ...styles.text, ...styles.description }}>
               Request your Grama Niladari Certificates.
             </H4>
             <Button
               size='big'
               color='filledPrimary'
-              title='Sign in with Asgardeo'
-              onPress={() => promptAsync()}
+              title='Get Started'
+              onPress={() => navigation.navigate('ChooseOptionScreen')}
             />
           </View>
         </View>
@@ -107,11 +37,11 @@ export default function ({ navigation, route }) {
           <View style={styles.logoContainer}>
             <Image
               source={require('../assets/SLEmblem.png')}
-              style={styles.footerLogo}
+              style={styles.logo}
             />
             <Image
               source={require('../assets/choreo.png')}
-              style={styles.footerLogo}
+              style={styles.logo}
             />
           </View>
         </View>
@@ -151,10 +81,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
   },
-  gLogoContainer: {
-    width: 250,
-    height: 70,
-  },
   logoContainer: {
     width: '80%',
     flexDirection: 'row',
@@ -174,11 +100,6 @@ const styles = StyleSheet.create({
     height: 300,
   },
   logo: {
-    resizeMode: 'contain',
-    width: '100%',
-    height: '100%',
-  },
-  footerLogo: {
     resizeMode: 'contain',
     width: '40%',
     height: '100%',

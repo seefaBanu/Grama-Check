@@ -24,11 +24,7 @@ module.exports.TextInputBox = function (props) {
           setState(0);
         }}
         name={props.name}
-        style={[
-          styles.input,
-          state ? styles.inputFocused : null,
-          props.disabled ? { backgroundColor: Theme.overlayShade } : null,
-        ]}
+        style={[styles.input, state ? styles.inputFocused : null]}
         placeholder={props.placeholder}
         textContentType={props.type}
         secureTextEntry={props.secure ? true : false}
@@ -37,8 +33,6 @@ module.exports.TextInputBox = function (props) {
         onChangeText={props.onChangeText}
         value={props.value}
         placeholderTextColor={Theme.placeholderText}
-        editable={props.disabled ? false : true}
-        selectTextOnFocus={props.disabled ? false : true}
       />
       {props.error && props.touched && (
         <Text style={styles.errormsg}>{props.error}</Text>

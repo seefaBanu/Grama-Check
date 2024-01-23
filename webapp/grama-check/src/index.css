@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 .mochiCustom{
-    --dark-3: #f5f1f1 !important;
+    /* --dark-3: #f5f1f1 !important; */
     --tertiary: #a1a0a4 !important;
+    --secondary: #7898f8 !important;
+
 }
