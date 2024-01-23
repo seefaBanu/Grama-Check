@@ -1,41 +1,41 @@
-import { useEffect,useState } from 'react'
-import RequestList from "./pages/RequestList"
+import React from "react";
+import RequestList from "./pages/RequestList";
 import SingleRequest from "./pages/SingleRequest";
 import { BrowserRouter, Router, Link, Route, Routes } from "react-router-dom";
 import { useAuthContext } from "@asgardeo/auth-react";
-import {AppContext} from "./contexts/AppContext"
-import {useAccessToken} from "./hooks"
 import Login from "./pages/Login";
+import { useEffect } from "react";
 import Layout from "./Layout";
 
-
 function App() {
-  const { state , getBasicUserInfo } = useAuthContext();
-  const [userDetails, setUserDetails] = useState([]);
-  const accessToken = useAccessToken();
-  
+  const { state, getBasicUserInfo } = useAuthContext();
+  const [userDetails, setUserDetails] = React.useState([]);
 
   useEffect(() => {
-    if(state.isAuthenticated){
+    if (state.isAuthenticated) {
       getBasicUserInfo().then((response) => {
         setUserDetails(response);
       });
     }
-  }, [getBasicUserInfo,state.isAuthenticated]);
+  }, [getBasicUserInfo, state.isAuthenticated]);
 
   return (
-    <AppContext.Provider value={accessToken}>
-         <BrowserRouter>
-          <Routes>
-            <Route element={<Layout/>} >
-              <Route path="/Request" element={<RequestList />} />
-              <Route path="/single-request/:id" element={<SingleRequest />} /> 
-            </Route>
-            <Route path="/" element={<Login state = {state} userDetails={userDetails} />} />
-          </Routes>
-        </BrowserRouter>       
-    </AppContext.Provider>
-  )
+    <div className="">
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/Request" element={<RequestList />} />
+            <Route path="/single-request/:id" element={<SingleRequest />} />
+          </Route>
+
+          <Route
+            path="/"
+            element={<Login state={state} userDetails={userDetails} />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
-export default App
+export default App;
