@@ -9,7 +9,7 @@ import axios from 'axios';
 export default function UserCard() {
     const [gnData,setGnData]=useState({});
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const { state ,getAccessToken} = useAuthContext();
+  const { state ,getAccessToken , signOut} = useAuthContext();
 
   const togglePopup = () => {
     setIsPopupVisible(!isPopupVisible);
@@ -106,12 +106,12 @@ export default function UserCard() {
               className="text-gray-400 flex my-auto cursor-pointer hover:text-gray-500 hover:scale-110 transition duration-300"
             >
               <IoLogOut className='mt-[2px]'/>
-              <p className='text-sm mx-2'>Logout</p>
+              <p className='text-sm mx-2' onClick={()=> signOut()}>Logout</p>
             </button>
 
             {/* Close button */}
             <button onClick={togglePopup} className="text-red-500 text-xl cursor-pointer hover:text-red-600 hover:scale-105 transition duration-300">
-            <IoCloseCircle />
+            {/* <IoCloseCircle /> */}
             </button>
          </div>
         

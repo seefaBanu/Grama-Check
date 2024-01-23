@@ -197,7 +197,7 @@ function RequestList({ token }) {
                   <tr
                     key={item.id}
                     className="border-b-2 round cursor-pointer hover:bg-black hover:bg-opacity-50 hover:text-white"
-                    onClick={() => naivgate(`/single-request/${item.id}`)}
+                    onClick={() => naivgate(`/request/${item.id}`)}
                   >
                     <td className="text-xs p-2">{item.userName}</td>
                     <td className="text-xs p-2">
