@@ -8,7 +8,7 @@ import { Linking } from 'react-native';
 export const AuthContext = createContext(null);
 export const TOKEN_ENDPOINT = 'https://api.asgardeo.io/t/interns/oauth2/token';
 export const redirectUri = AuthSession.makeRedirectUri();
-export const CLIENT_ID = 'OoXOfHIW8C8fcft8ouqJtVCgaVwa';
+export const CLIENT_ID = '4pvNZCwIhW_ZDY9b3PlkWWcy3vsa';
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const checkAuth = async function () {

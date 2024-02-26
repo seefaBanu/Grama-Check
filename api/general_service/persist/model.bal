@@ -30,4 +30,3 @@ type GramaDivision record {|
     string divisionalSecretariat;
     string gramiEmail;
 |};
-

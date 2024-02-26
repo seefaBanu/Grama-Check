@@ -1,8 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { AuthProvider } from '@asgardeo/auth-react'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import { AuthProvider } from '@asgardeo/auth-react';
 
 const config = {
   // signInRedirectURL: "localhost:5173",
@@ -14,10 +14,10 @@ const config = {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render( 
-   <React.StrictMode>
+root.render(
+  <React.StrictMode>
     <AuthProvider config={config}>
       <App />
     </AuthProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
