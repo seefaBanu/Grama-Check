@@ -4,6 +4,8 @@ import { jwtDecode } from 'jwt-decode';
 import * as AuthSession from 'expo-auth-session';
 import 'core-js/stable/atob';
 import { Linking } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+
 
 export const AuthContext = createContext(null);
 export const TOKEN_ENDPOINT = 'https://api.asgardeo.io/t/interns/oauth2/token';
@@ -56,9 +58,10 @@ export const AuthProvider = ({ children }) => {
   };
   const logout = async function () {
     try {
-      Linking.openURL(
-        `https://api.asgardeo.io/t/interns/oidc/logout?client_id=${CLIENT_ID}&post_logout_redirect_uri=${redirectUri}`
-      );
+      // Linking.openURL(
+      //   `https://api.asgardeo.io/t/interns/oidc/logout?client_id=${CLIENT_ID}&post_logout_redirect_uri=${redirectUri}`
+      // );
+      await WebBrowser.openAuthSessionAsync(`https://api.asgardeo.io/t/interns/oidc/logout?client_id=${CLIENT_ID}&post_logout_redirect_uri=${redirectUri}`);
       await SecureStore.deleteItemAsync('accessToken');
       await SecureStore.deleteItemAsync('userData');
       setUser(null);
