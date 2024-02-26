@@ -12,11 +12,6 @@ export default function Login(props) {
 
 
   return (
-    <div>
-      {state ?. isAuthenticated ? (
-        Navigate('/Request')
-      ):
-      (
         <div> 
           <div className='flex justify-between items-center h-screen'>
            <img src={Bg} alt='login' className=' mx-[10%] w-[60%] h-[60%]'/>
@@ -29,10 +24,7 @@ export default function Login(props) {
               <Button title='Sign in'  color='secondary' text='black' onClick={() => signIn()} />
             </div>
             </div>
-            
         </div>
-      )
-      }
-    </div>
+  
   )
 }
